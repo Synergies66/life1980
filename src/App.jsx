@@ -210,16 +210,18 @@ function Nav({lang,setLang,region,setRegion,user,setPage,setCatFilter,onAuth}){
     </div>
 
     {/* Category bar - bigger, clearer */}
-    <div style={{borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",alignItems:"center",padding:"0 16px",height:46,gap:2,overflowX:"auto"}}>
+    <div style={{borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",alignItems:"center",padding:"0 16px",height:46,gap:2,overflowX:"visible",position:"relative"}}>
+      <div style={{display:"flex",alignItems:"center",gap:2,overflowX:"auto",flex:1,minWidth:0}}>
       {NAV_CATS.map(c=>(
         <button key={c.key} onClick={()=>goCategory(c.catI)}
-          style={{background:"none",border:"none",color:"rgba(255,255,255,0.72)",fontSize:14,fontWeight:600,padding:"7px 18px",borderRadius:10,whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:6,cursor:"pointer",letterSpacing:"-.01em"}}
+          style={{background:"none",border:"none",color:"rgba(255,255,255,0.72)",fontSize:14,fontWeight:600,padding:"7px 18px",borderRadius:10,whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:6,cursor:"pointer",letterSpacing:"-.01em",flexShrink:0}}
           onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.1)";e.currentTarget.style.color="#fff";}}
           onMouseLeave={e=>{e.currentTarget.style.background="none";e.currentTarget.style.color="rgba(255,255,255,0.72)";}}>
           <span style={{fontSize:15}}>{c.icon}</span><span>{nl[c.key]}</span>
         </button>
       ))}
       <div style={{width:1,height:22,background:"rgba(255,255,255,0.1)",margin:"0 8px",flexShrink:0}}/>
+      </div>
       {/* Featured */}
       <div style={{position:"relative",flexShrink:0}}>
         <button onClick={()=>{setFeatOpen(!featOpen);setRo(false);setLo(false);}}
@@ -239,6 +241,7 @@ function Nav({lang,setLang,region,setRegion,user,setPage,setCatFilter,onAuth}){
         </div>}
       </div>
     </div>
+  </div>
   </header>;
 }
 
