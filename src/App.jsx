@@ -153,24 +153,91 @@ function Abar({pct}){const ref=useRef();const[go,setGo]=useState(false);useEffec
 function Logo({sz=20,dk}){return <span style={{fontFamily:"'Cormorant Garamond',Georgia,serif",fontStyle:"italic",fontWeight:700,fontSize:sz,color:dk?"var(--ink)":"#fff",letterSpacing:"-.01em",lineHeight:1}}>Life<span style={{color:"var(--red)"}}>1980</span></span>;}
 function SH({lbl,ttl,lt}){return <div style={{marginBottom:22}}><p style={{fontSize:11,fontWeight:700,color:"var(--red)",letterSpacing:".1em",textTransform:"uppercase",marginBottom:6}}>{lbl}</p><h2 style={{fontSize:"clamp(22px,3vw,28px)",fontWeight:700,color:lt?"#fff":"var(--ink)",letterSpacing:"-.02em"}}>{ttl}</h2></div>;}
 
-function Nav({lang,setLang,region,setRegion,user,setPage,onAuth}){
-  const t=T[lang];const[bl,setBl]=useState(false);const[lo,setLo]=useState(false);const[ro,setRo]=useState(false);
+// Navigation labels per language
+const NAV_LABELS={
+  zh:{property:"房产",jobs:"工作",immigration:"移民",education:"教育",lawyer:"律师",featured:"精选",dining:"餐饮",hotels:"酒店",travel:"旅游"},
+  zt:{property:"房產",jobs:"工作",immigration:"移民",education:"教育",lawyer:"律師",featured:"精選",dining:"餐飲",hotels:"酒店",travel:"旅遊"},
+  en:{property:"Property",jobs:"Jobs",immigration:"Immigration",education:"Education",lawyer:"Lawyer",featured:"Featured",dining:"Dining",hotels:"Hotels",travel:"Travel"},
+  ja:{property:"不動産",jobs:"仕事",immigration:"移民",education:"教育",lawyer:"弁護士",featured:"おすすめ",dining:"グルメ",hotels:"ホテル",travel:"旅行"},
+  ko:{property:"부동산",jobs:"취업",immigration:"이민",education:"교육",lawyer:"변호사",featured:"추천",dining:"맛집",hotels:"호텔",travel:"여행"},
+  es:{property:"Propiedades",jobs:"Empleo",immigration:"Inmigración",education:"Educación",lawyer:"Abogado",featured:"Destacado",dining:"Gastronomía",hotels:"Hoteles",travel:"Viajes"},
+  fr:{property:"Immobilier",jobs:"Emploi",immigration:"Immigration",education:"Éducation",lawyer:"Avocat",featured:"Sélection",dining:"Gastronomie",hotels:"Hôtels",travel:"Voyages"},
+  ar:{property:"عقارات",jobs:"وظائف",immigration:"هجرة",education:"تعليم",lawyer:"محامي",featured:"مختارات",dining:"مطاعم",hotels:"فنادق",travel:"سياحة"},
+};
+
+// catI map: immigration=0, lawyer=1, property=2, education=3, jobs=4
+const NAV_CATS=[
+  {key:"immigration",catI:0,icon:"🌏"},
+  {key:"lawyer",catI:1,icon:"⚖️"},
+  {key:"property",catI:2,icon:"🏠"},
+  {key:"education",catI:3,icon:"🎓"},
+  {key:"jobs",catI:4,icon:"💼"},
+];
+
+function Nav({lang,setLang,region,setRegion,user,setPage,setCatFilter,onAuth}){
+  const t=T[lang];const nl=NAV_LABELS[lang]||NAV_LABELS.en;
+  const[bl,setBl]=useState(false);const[lo,setLo]=useState(false);
+  const[ro,setRo]=useState(false);const[featOpen,setFeatOpen]=useState(false);
   useEffect(()=>{const fn=()=>setBl(window.scrollY>8);window.addEventListener("scroll",fn);return()=>window.removeEventListener("scroll",fn);},[]);
   const rO=REGIONS.find(r=>r.c===region)||REGIONS[0];
-  return <header style={{position:"fixed",top:0,left:0,right:0,zIndex:500,height:52,background:bl?"rgba(28,28,30,0.88)":"transparent",backdropFilter:bl?"blur(20px)":"none",WebkitBackdropFilter:bl?"blur(20px)":"none",borderBottom:bl?"1px solid rgba(255,255,255,0.08)":"none",transition:"all .3s",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",gap:8}}>
-    <button onClick={()=>setPage("home")} style={{background:"none",border:"none",flexShrink:0}}><Logo sz={28}/></button>
-    <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
-      <div style={{position:"relative"}}>
-        <button onClick={()=>{setRo(!ro);setLo(false);}} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:980,padding:"5px 11px",fontSize:12,color:"rgba(255,255,255,0.85)",fontWeight:600,display:"flex",alignItems:"center",gap:4}}>{rO.flag}<span style={{fontSize:9,opacity:.6}}>▾</span></button>
-        {ro&&<div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"var(--card)",borderRadius:14,boxShadow:"0 8px 40px rgba(0,0,0,0.18)",padding:6,minWidth:150,zIndex:600}} className="mo">{REGIONS.map(r=><button key={r.c} onClick={()=>{setRegion(r.c);setRo(false);}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:region===r.c?"var(--bg)":"none",border:"none",borderRadius:8,padding:"8px 12px",fontSize:13,fontWeight:region===r.c?700:400,color:"var(--ink)",textAlign:"left"}}><span>{r.flag}</span><span>{r[lang]||r.en}</span></button>)}</div>}
+  const goCategory=(catI)=>{setCatFilter(catI);setPage("home");};
+
+  return <header style={{position:"fixed",top:0,left:0,right:0,zIndex:500,background:bl?"rgba(28,28,30,0.92)":"rgba(28,28,30,0.6)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.06)",transition:"all .3s"}}>
+    {/* Top bar */}
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",height:52,gap:8}}>
+      <button onClick={()=>setPage("home")} style={{background:"none",border:"none",flexShrink:0}}><Logo sz={26}/></button>
+
+      {/* Right controls */}
+      <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
+        {/* Region */}
+        <div style={{position:"relative"}}>
+          <button onClick={()=>{setRo(!ro);setLo(false);setFeatOpen(false);}} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:980,padding:"5px 10px",fontSize:12,color:"rgba(255,255,255,0.85)",fontWeight:600,display:"flex",alignItems:"center",gap:4}}>{rO.flag}<span style={{fontSize:9,opacity:.6}}>▾</span></button>
+          {ro&&<div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"var(--card)",borderRadius:14,boxShadow:"0 8px 40px rgba(0,0,0,0.18)",padding:6,minWidth:150,zIndex:600}} className="mo">{REGIONS.map(r=><button key={r.c} onClick={()=>{setRegion(r.c);setRo(false);}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:region===r.c?"var(--bg)":"none",border:"none",borderRadius:8,padding:"8px 12px",fontSize:13,fontWeight:region===r.c?700:400,color:"var(--ink)",textAlign:"left"}}><span>{r.flag}</span><span>{r[lang]||r.en}</span></button>)}</div>}
+        </div>
+        {/* Language */}
+        <div style={{position:"relative"}}>
+          <button onClick={()=>{setLo(!lo);setRo(false);setFeatOpen(false);}} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:980,padding:"5px 10px",fontSize:12,color:"rgba(255,255,255,0.85)",fontWeight:600,display:"flex",alignItems:"center",gap:4}}>{LANGS.find(l=>l.code===lang)?.flag}<span style={{fontSize:9,opacity:.6}}>▾</span></button>
+          {lo&&<div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"var(--card)",borderRadius:14,boxShadow:"0 8px 40px rgba(0,0,0,0.18)",padding:6,minWidth:140,zIndex:600}} className="mo">{LANGS.map(l=><button key={l.code} onClick={()=>{setLang(l.code);setLo(false);}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:lang===l.code?"var(--bg)":"none",border:"none",borderRadius:8,padding:"8px 12px",fontSize:13,fontWeight:lang===l.code?700:400,color:"var(--ink)"}}><span>{l.flag}</span><span>{l.label}</span></button>)}</div>}
+        </div>
+        <div style={{width:1,height:14,background:"rgba(255,255,255,0.2)"}}/>
+        {user
+          ?<button onClick={()=>setPage("member")} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:980,padding:"5px 12px",fontSize:12,color:"rgba(255,255,255,0.9)",fontWeight:700}}>{user.split("@")[0]}</button>
+          :<><button onClick={onAuth} style={{background:"none",border:"none",color:"rgba(255,255,255,0.75)",fontSize:13,fontWeight:600,padding:"5px 8px"}}>{t.login}</button>
+            <button onClick={()=>setPage("pub")} style={{background:"var(--red)",color:"#fff",border:"none",borderRadius:980,padding:"6px 14px",fontSize:13,fontWeight:700}}>{t.pub}</button></>}
       </div>
+    </div>
+
+    {/* Category nav bar */}
+    <div style={{borderTop:"1px solid rgba(255,255,255,0.06)",display:"flex",alignItems:"center",padding:"0 20px",height:40,gap:4,overflowX:"auto"}}>
+      {NAV_CATS.map(c=>(
+        <button key={c.key} onClick={()=>goCategory(c.catI)}
+          style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,fontWeight:600,padding:"4px 14px",borderRadius:980,whiteSpace:"nowrap",transition:"all .15s"}}
+          onMouseEnter={e=>e.target.style.background="rgba(255,255,255,0.1)"}
+          onMouseLeave={e=>e.target.style.background="none"}>
+          {c.icon} {nl[c.key]}
+        </button>
+      ))}
+      {/* Featured with dropdown */}
       <div style={{position:"relative"}}>
-        <button onClick={()=>{setLo(!lo);setRo(false);}} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:980,padding:"5px 11px",fontSize:12,color:"rgba(255,255,255,0.85)",fontWeight:600,display:"flex",alignItems:"center",gap:4}}>{LANGS.find(l=>l.code===lang)?.flag}<span style={{fontSize:9,opacity:.6}}>▾</span></button>
-        {lo&&<div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"var(--card)",borderRadius:14,boxShadow:"0 8px 40px rgba(0,0,0,0.18)",padding:6,minWidth:140,zIndex:600}} className="mo">{LANGS.map(l=><button key={l.code} onClick={()=>{setLang(l.code);setLo(false);}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:lang===l.code?"var(--bg)":"none",border:"none",borderRadius:8,padding:"8px 12px",fontSize:13,fontWeight:lang===l.code?700:400,color:"var(--ink)"}}><span>{l.flag}</span><span>{l.label}</span></button>)}</div>}
+        <button onClick={()=>setFeatOpen(!featOpen)}
+          style={{background:featOpen?"rgba(232,0,61,0.15)":"none",border:"none",color:featOpen?"var(--red)":"rgba(255,255,255,0.7)",fontSize:13,fontWeight:700,padding:"4px 14px",borderRadius:980,whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:4}}>
+          ⭐ {nl.featured} <span style={{fontSize:9,opacity:.6}}>▾</span>
+        </button>
+        {featOpen&&<div style={{position:"absolute",top:"calc(100% + 8px)",left:0,background:"var(--card)",borderRadius:14,boxShadow:"0 8px 40px rgba(0,0,0,0.22)",padding:8,minWidth:160,zIndex:600}} className="mo">
+          {[{icon:"🍜",key:"dining",page:"featured-dining"},{icon:"🏨",key:"hotels",page:"featured-hotels"},{icon:"✈️",key:"travel",page:"travel"}].map(item=>(
+            <button key={item.key} onClick={()=>{setFeatOpen(false);setPage(item.page);}}
+              style={{display:"flex",alignItems:"center",gap:10,width:"100%",background:"none",border:"none",borderRadius:10,padding:"10px 14px",fontSize:14,fontWeight:600,color:"var(--ink)",textAlign:"left",transition:"background .15s"}}
+              onMouseEnter={e=>e.currentTarget.style.background="var(--bg)"}
+              onMouseLeave={e=>e.currentTarget.style.background="none"}>
+              <span style={{fontSize:20}}>{item.icon}</span>
+              <div>
+                <div style={{fontWeight:700,fontSize:13}}>{nl[item.key]}</div>
+                <div style={{fontSize:11,color:"var(--ink4)",fontWeight:400}}>{item.key==="dining"?(lang==="zh"?"华人餐厅推荐":lang==="zt"?"華人餐廳推薦":"Chinese Restaurants"):item.key==="hotels"?(lang==="zh"?"精选酒店":lang==="zt"?"精選酒店":"Curated Hotels"):(lang==="zh"?"AI城市旅游指南":lang==="zt"?"AI城市旅遊指南":"AI Travel Guide")}</div>
+              </div>
+            </button>
+          ))}
+        </div>}
       </div>
-      <div style={{width:1,height:14,background:"rgba(255,255,255,0.2)"}}/>
-      {user?<button onClick={()=>setPage("member")} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:980,padding:"5px 13px",fontSize:12,color:"rgba(255,255,255,0.9)",fontWeight:700}}>{user.split("@")[0]}</button>
-      :<><button onClick={()=>setPage("travel")} style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,fontWeight:600,padding:"5px 8px"}}>✈️</button><button onClick={onAuth} style={{background:"none",border:"none",color:"rgba(255,255,255,0.75)",fontSize:13,fontWeight:600,padding:"5px 8px"}}>{t.login}</button><button onClick={()=>setPage("pub")} style={{background:"var(--red)",color:"#fff",border:"none",borderRadius:980,padding:"7px 15px",fontSize:13,fontWeight:700}}>{t.pub}</button></>}
     </div>
   </header>;
 }
@@ -212,9 +279,10 @@ function AuthModal({t,onClose,onLogin}){
   </div>;
 }
 
-function Home({lang,region,setPage,setDetail}){
+function Home({lang,region,setPage,setDetail,initCatI}){
   const t=T[lang];const isZh=lang==="zh"||lang==="zt";
-  const[q,setQ]=useState("");const[catI,setCatI]=useState(null);
+  const[q,setQ]=useState("");const[catI,setCatI]=useState(initCatI??null);
+  useEffect(()=>{if(initCatI!==undefined)setCatI(initCatI);},[initCatI]);
   const[merchants,setMerchants]=useState(MS);
   const[loadingM,setLoadingM]=useState(true);
   const nm=m=>isZh?m.name:m.nameEn;
@@ -721,12 +789,122 @@ function Travel({lang,setPage}){
   </div>;
 }
 
+// ── FEATURED PAGE (餐饮 / 酒店 / 旅游) ──
+function Featured({lang,setPage,initTab}){
+  const nl=NAV_LABELS[lang]||NAV_LABELS.en;
+  const[tab,setTab]=useState(initTab||"dining");
+  const isZh=lang==="zh"||lang==="zt";
+  const tabs=[{key:"dining",icon:"🍜"},{key:"hotels",icon:"🏨"},{key:"travel",icon:"✈️"}];
+
+  const diningItems=[
+    {name:isZh?"金龙海鲜酒楼":"Golden Dragon Seafood",area:isZh?"奥克兰市中心":"Auckland CBD",cuisine:isZh?"粤式海鲜":"Cantonese Seafood",rating:4.8,price:"$$",desc:isZh?"正宗粤式早茶与海鲜，华人聚会首选。":"Authentic dim sum and seafood, perfect for family gatherings."},
+    {name:isZh?"四川麻辣香锅":"Sichuan Spice House",area:isZh?"皇后街":"Queen St",cuisine:isZh?"川菜":"Sichuan",rating:4.7,price:"$$",desc:isZh?"地道川菜，麻辣鲜香，思乡首选。":"Authentic Sichuan flavours. A must for spice lovers."},
+    {name:isZh?"台湾牛肉面馆":"Taiwan Beef Noodle",area:isZh?"北岸":"North Shore",cuisine:isZh?"台湾料理":"Taiwanese",rating:4.6,price:"$",desc:isZh?"台式红烧牛肉面，汤底浓郁，分量十足。":"Classic Taiwanese braised beef noodles with rich broth."},
+    {name:isZh?"上海点心坊":"Shanghai Dim Sum",area:isZh?"帕内尔":"Parnell",cuisine:isZh?"沪式点心":"Shanghainese",rating:4.5,price:"$",desc:isZh?"小笼包、生煎包，上海风味原汁原味。":"Soup dumplings and pan-fried bao. Genuine Shanghai taste."},
+  ];
+
+  const hotelItems=[
+    {name:isZh?"索菲特奥克兰酒店":"Sofitel Auckland Viaduct Harbour",area:isZh?"维亚达克港":"Viaduct Harbour",stars:5,price:"$$$",desc:isZh?"法式奢华，海港景致，距市中心步行可达。":"French luxury with harbour views. Walking distance to CBD."},
+    {name:isZh?"大使馆公寓酒店":"The Quadrant Hotel",area:isZh?"市中心":"City Centre",stars:4,price:"$$",desc:isZh?"宽敞套房，设施齐全，中文服务，华人推荐。":"Spacious suites with full facilities. Chinese-speaking staff available."},
+    {name:isZh?"皇家大道酒店":"Rydges Auckland",area:isZh?"市中心":"City Centre",stars:4,price:"$$",desc:isZh?"性价比高，位置绝佳，商务出行首选。":"Great value, central location. Popular with business travellers."},
+    {name:isZh?"斯凯城赌场酒店":"SkyCity Hotel",area:isZh?"天空塔旁":"Sky Tower",stars:4,price:"$$",desc:isZh?"毗邻天空塔，购物娱乐一步到位。":"Next to Sky Tower. Shopping and entertainment on your doorstep."},
+  ];
+
+  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:92}}>
+    <div style={{background:"#1C1C1E",padding:"40px 24px 32px"}}>
+      <div style={{maxWidth:800,margin:"0 auto"}}>
+        <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"rgba(255,255,255,0.7)",borderRadius:980,padding:"6px 14px",fontSize:12,fontWeight:700,marginBottom:20}}>← {T[lang]?.back||"Back"}</button>
+        <p style={{fontSize:11,fontWeight:700,color:"var(--red)",letterSpacing:".1em",textTransform:"uppercase",marginBottom:8}}>K1980</p>
+        <h1 style={{fontSize:"clamp(24px,4vw,36px)",fontWeight:700,color:"#fff",letterSpacing:"-.02em",marginBottom:16}}>
+          ⭐ {nl.featured}
+        </h1>
+        {/* Tabs */}
+        <div style={{display:"flex",gap:8}}>
+          {tabs.map(tb=>(
+            <button key={tb.key} onClick={()=>setTab(tb.key)}
+              style={{padding:"8px 20px",borderRadius:980,background:tab===tb.key?"var(--red)":"rgba(255,255,255,0.08)",color:"#fff",border:"none",fontSize:13,fontWeight:700,transition:"all .18s"}}>
+              {tb.icon} {nl[tb.key]}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div style={{maxWidth:800,margin:"0 auto",padding:"28px 24px"}}>
+      {/* Dining */}
+      {tab==="dining"&&<>
+        <div style={{marginBottom:20}}>
+          <p style={{fontSize:11,fontWeight:700,color:"var(--red)",letterSpacing:".1em",textTransform:"uppercase",marginBottom:4}}>🍜 {nl.dining}</p>
+          <h2 style={{fontSize:22,fontWeight:700,letterSpacing:"-.02em"}}>{isZh?"华人餐厅推荐":lang==="zt"?"華人餐廳推薦":"Chinese Restaurant Guide"}</h2>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          {diningItems.map((r,i)=>(
+            <div key={i} style={{...SI.card,borderRadius:16,padding:"18px 20px"}}>
+              <div style={{display:"flex",alignItems:"center",gap:14}}>
+                <div style={{width:48,height:48,borderRadius:12,background:"rgba(232,0,61,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>🍜</div>
+                <div style={{flex:1}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
+                    <span style={{fontWeight:700,fontSize:15,color:"var(--ink)"}}>{r.name}</span>
+                    <span style={{fontSize:12,background:"var(--bg)",padding:"2px 8px",borderRadius:980,color:"var(--ink3)",fontWeight:600}}>{r.cuisine}</span>
+                  </div>
+                  <div style={{fontSize:12,color:"var(--ink4)",marginBottom:5}}>📍 {r.area} · {r.price}</div>
+                  <p style={{fontSize:13,color:"var(--ink2)",lineHeight:1.5}}>{r.desc}</p>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}>
+                  <span style={{fontSize:13,fontWeight:700,color:"var(--ink)"}}>★ {r.rating}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>}
+
+      {/* Hotels */}
+      {tab==="hotels"&&<>
+        <div style={{marginBottom:20}}>
+          <p style={{fontSize:11,fontWeight:700,color:"var(--red)",letterSpacing:".1em",textTransform:"uppercase",marginBottom:4}}>🏨 {nl.hotels}</p>
+          <h2 style={{fontSize:22,fontWeight:700,letterSpacing:"-.02em"}}>{isZh?"精选酒店推荐":lang==="zt"?"精選酒店推薦":"Curated Hotel Guide"}</h2>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          {hotelItems.map((h,i)=>(
+            <div key={i} style={{...SI.card,borderRadius:16,padding:"18px 20px"}}>
+              <div style={{display:"flex",alignItems:"center",gap:14}}>
+                <div style={{width:48,height:48,borderRadius:12,background:"rgba(0,113,227,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>🏨</div>
+                <div style={{flex:1}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
+                    <span style={{fontWeight:700,fontSize:15,color:"var(--ink)"}}>{h.name}</span>
+                    <span style={{fontSize:12,color:"#FF9F0A",fontWeight:700}}>{"★".repeat(h.stars)}</span>
+                  </div>
+                  <div style={{fontSize:12,color:"var(--ink4)",marginBottom:5}}>📍 {h.area} · {h.price}</div>
+                  <p style={{fontSize:13,color:"var(--ink2)",lineHeight:1.5}}>{h.desc}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>}
+
+      {/* Travel - redirect to Travel page */}
+      {tab==="travel"&&<div style={{textAlign:"center",padding:"60px 0"}}>
+        <div style={{fontSize:64,marginBottom:16}}>✈️</div>
+        <h2 style={{fontSize:24,fontWeight:700,letterSpacing:"-.02em",marginBottom:12}}>{nl.travel}</h2>
+        <p style={{color:"var(--ink3)",fontSize:15,marginBottom:28,maxWidth:380,margin:"0 auto 28px"}}>
+          {isZh?"输入城市，AI 实时生成景点、华人餐厅、实用攻略":lang==="zt"?"輸入城市，AI 實時生成景點、華人餐廳、實用攻略":"Enter any city and AI generates attractions, restaurants and tips in real time"}
+        </p>
+        <button onClick={()=>setPage("travel")} style={{background:"var(--red)",color:"#fff",border:"none",borderRadius:980,padding:"14px 32px",fontSize:15,fontWeight:700}}>
+          {TT[lang]?.btn||"Generate City Guide"} →
+        </button>
+      </div>}
+    </div>
+  </div>;
+}
+
 export default function App(){
   const[lang,setLang]=useState("zh");const[region,setRegion]=useState("all");
   const[page,setPage]=useState("home");const[detail,setDetail]=useState(null);
   const[user,setUser]=useState(null);const[showAuth,setShowAuth]=useState(false);
+  const[catFilter,setCatFilter]=useState(null);
 
-  // Restore session on mount, listen for auth changes
   useEffect(()=>{
     onAuthChange(session=>{
       if(session?.user) setUser(session.user.email);
@@ -736,21 +914,20 @@ export default function App(){
 
   useEffect(()=>{window.scrollTo(0,0);},[page]);
 
-  const handleLogout=async()=>{
-    await authSignOut();
-    setUser(null);setPage("home");
-  };
+  const handleLogout=async()=>{await authSignOut();setUser(null);setPage("home");};
 
   const isRTL=lang==="ar";
   return <div dir={isRTL?"rtl":"ltr"} style={{textAlign:isRTL?"right":"left"}}>
     <style>{GS}</style>
-    <Nav lang={lang} setLang={setLang} region={region} setRegion={setRegion} user={user} setPage={setPage} onAuth={()=>setShowAuth(true)}/>
+    <Nav lang={lang} setLang={setLang} region={region} setRegion={setRegion} user={user} setPage={setPage} setCatFilter={setCatFilter} onAuth={()=>setShowAuth(true)}/>
     {showAuth&&<AuthModal t={T[lang]} onClose={()=>setShowAuth(false)} onLogin={email=>{setUser(email);setShowAuth(false);setPage("member");}}/>}
-    {page==="home"   &&<Home   lang={lang} region={region} setPage={setPage} setDetail={setDetail}/>}
-    {page==="detail" &&detail &&<Detail m={detail} lang={lang} setPage={setPage}/>}
-    {page==="pub"    &&<Publish lang={lang} setPage={setPage} user={user?{email:user}:null}/>}
-    {page==="member" &&user   &&<Member lang={lang} user={user} setPage={setPage} onLogout={handleLogout}/>}
-    {page==="admin"  &&<Admin  lang={lang} setPage={setPage}/>}
-    {page==="travel" &&<Travel lang={lang} setPage={setPage}/>}
+    {page==="home"            &&<Home   lang={lang} region={region} setPage={setPage} setDetail={setDetail} initCatI={catFilter}/>}
+    {page==="detail"&&detail  &&<Detail m={detail} lang={lang} setPage={setPage}/>}
+    {page==="pub"             &&<Publish lang={lang} setPage={setPage} user={user?{email:user}:null}/>}
+    {page==="member"&&user    &&<Member lang={lang} user={user} setPage={setPage} onLogout={handleLogout}/>}
+    {page==="admin"           &&<Admin  lang={lang} setPage={setPage}/>}
+    {page==="travel"          &&<Travel lang={lang} setPage={setPage}/>}
+    {page==="featured-dining" &&<Featured lang={lang} setPage={setPage} initTab="dining"/>}
+    {page==="featured-hotels" &&<Featured lang={lang} setPage={setPage} initTab="hotels"/>}
   </div>;
 }
