@@ -176,64 +176,66 @@ const NAV_CATS=[
 
 function Nav({lang,setLang,region,setRegion,user,setPage,setCatFilter,onAuth}){
   const t=T[lang];const nl=NAV_LABELS[lang]||NAV_LABELS.en;
-  const[bl,setBl]=useState(false);const[lo,setLo]=useState(false);
-  const[ro,setRo]=useState(false);const[featOpen,setFeatOpen]=useState(false);
-  useEffect(()=>{const fn=()=>setBl(window.scrollY>8);window.addEventListener("scroll",fn);return()=>window.removeEventListener("scroll",fn);},[]);
+  const[lo,setLo]=useState(false);const[ro,setRo]=useState(false);const[featOpen,setFeatOpen]=useState(false);
+  useEffect(()=>{const fn=()=>{};window.addEventListener("scroll",fn);return()=>window.removeEventListener("scroll",fn);},[]);
   const rO=REGIONS.find(r=>r.c===region)||REGIONS[0];
-  const goCategory=(catI)=>{setCatFilter(catI);setPage("home");};
+  const goCategory=(catI)=>{setCatFilter(catI);setPage("home");setFeatOpen(false);};
+  const closeAll=()=>{setFeatOpen(false);setRo(false);setLo(false);};
 
-  return <header style={{position:"fixed",top:0,left:0,right:0,zIndex:500,background:bl?"rgba(28,28,30,0.92)":"rgba(28,28,30,0.6)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.06)",transition:"all .3s"}}>
+  const featItems=[
+    {icon:"🍜",key:"dining",pg:"featured-dining",desc:{zh:"华人餐厅推荐",zt:"華人餐廳推薦",en:"Chinese Restaurants",ja:"中華レストラン",ko:"중국 식당",es:"Restaurantes Chinos",fr:"Restaurants Chinois",ar:"مطاعم صينية"}},
+    {icon:"🏨",key:"hotels",pg:"featured-hotels",desc:{zh:"精选酒店推荐",zt:"精選酒店推薦",en:"Curated Hotels",ja:"厳選ホテル",ko:"추천 호텔",es:"Hoteles Selectos",fr:"Hôtels Sélectionnés",ar:"فنادق مختارة"}},
+    {icon:"✈️",key:"travel",pg:"travel",desc:{zh:"AI城市旅游指南",zt:"AI城市旅遊指南",en:"AI City Travel Guide",ja:"AI旅行ガイド",ko:"AI 여행 가이드",es:"Guía de Viaje IA",fr:"Guide Voyage IA",ar:"دليل سفر AI"}},
+  ];
+
+  return <header style={{position:"fixed",top:0,left:0,right:0,zIndex:500,background:"rgba(18,18,20,0.97)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",borderBottom:"1px solid rgba(255,255,255,0.08)"}}>
     {/* Top bar */}
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",height:52,gap:8}}>
-      <button onClick={()=>setPage("home")} style={{background:"none",border:"none",flexShrink:0}}><Logo sz={26}/></button>
-
-      {/* Right controls */}
-      <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
-        {/* Region */}
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 24px",height:54,gap:8}}>
+      <button onClick={()=>{closeAll();setPage("home");}} style={{background:"none",border:"none",flexShrink:0}}><Logo sz={30}/></button>
+      <div style={{display:"flex",gap:8,alignItems:"center",flexShrink:0}}>
         <div style={{position:"relative"}}>
-          <button onClick={()=>{setRo(!ro);setLo(false);setFeatOpen(false);}} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:980,padding:"5px 10px",fontSize:12,color:"rgba(255,255,255,0.85)",fontWeight:600,display:"flex",alignItems:"center",gap:4}}>{rO.flag}<span style={{fontSize:9,opacity:.6}}>▾</span></button>
-          {ro&&<div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"var(--card)",borderRadius:14,boxShadow:"0 8px 40px rgba(0,0,0,0.18)",padding:6,minWidth:150,zIndex:600}} className="mo">{REGIONS.map(r=><button key={r.c} onClick={()=>{setRegion(r.c);setRo(false);}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:region===r.c?"var(--bg)":"none",border:"none",borderRadius:8,padding:"8px 12px",fontSize:13,fontWeight:region===r.c?700:400,color:"var(--ink)",textAlign:"left"}}><span>{r.flag}</span><span>{r[lang]||r.en}</span></button>)}</div>}
+          <button onClick={()=>{setRo(!ro);setLo(false);setFeatOpen(false);}} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:980,padding:"6px 13px",fontSize:13,color:"rgba(255,255,255,0.85)",fontWeight:600,display:"flex",alignItems:"center",gap:5}}>{rO.flag} <span style={{fontSize:10,opacity:.4}}>▾</span></button>
+          {ro&&<div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"var(--card)",borderRadius:14,boxShadow:"0 12px 48px rgba(0,0,0,0.28)",padding:6,minWidth:160,zIndex:700}} className="mo">{REGIONS.map(r=><button key={r.c} onClick={()=>{setRegion(r.c);setRo(false);}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:region===r.c?"var(--bg)":"none",border:"none",borderRadius:8,padding:"9px 12px",fontSize:13,fontWeight:region===r.c?700:400,color:"var(--ink)",textAlign:"left"}}><span>{r.flag}</span><span>{r[lang]||r.en}</span></button>)}</div>}
         </div>
-        {/* Language */}
         <div style={{position:"relative"}}>
-          <button onClick={()=>{setLo(!lo);setRo(false);setFeatOpen(false);}} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:980,padding:"5px 10px",fontSize:12,color:"rgba(255,255,255,0.85)",fontWeight:600,display:"flex",alignItems:"center",gap:4}}>{LANGS.find(l=>l.code===lang)?.flag}<span style={{fontSize:9,opacity:.6}}>▾</span></button>
-          {lo&&<div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"var(--card)",borderRadius:14,boxShadow:"0 8px 40px rgba(0,0,0,0.18)",padding:6,minWidth:140,zIndex:600}} className="mo">{LANGS.map(l=><button key={l.code} onClick={()=>{setLang(l.code);setLo(false);}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:lang===l.code?"var(--bg)":"none",border:"none",borderRadius:8,padding:"8px 12px",fontSize:13,fontWeight:lang===l.code?700:400,color:"var(--ink)"}}><span>{l.flag}</span><span>{l.label}</span></button>)}</div>}
+          <button onClick={()=>{setLo(!lo);setRo(false);setFeatOpen(false);}} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:980,padding:"6px 13px",fontSize:13,color:"rgba(255,255,255,0.85)",fontWeight:600,display:"flex",alignItems:"center",gap:5}}>{LANGS.find(l=>l.code===lang)?.flag} <span style={{fontSize:10,opacity:.4}}>▾</span></button>
+          {lo&&<div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"var(--card)",borderRadius:14,boxShadow:"0 12px 48px rgba(0,0,0,0.28)",padding:6,minWidth:150,zIndex:700}} className="mo">{LANGS.map(l=><button key={l.code} onClick={()=>{setLang(l.code);setLo(false);}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:lang===l.code?"var(--bg)":"none",border:"none",borderRadius:8,padding:"9px 12px",fontSize:13,fontWeight:lang===l.code?700:400,color:"var(--ink)"}}><span>{l.flag}</span><span>{l.label}</span></button>)}</div>}
         </div>
-        <div style={{width:1,height:14,background:"rgba(255,255,255,0.2)"}}/>
+        <div style={{width:1,height:18,background:"rgba(255,255,255,0.12)"}}/>
         {user
-          ?<button onClick={()=>setPage("member")} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:980,padding:"5px 12px",fontSize:12,color:"rgba(255,255,255,0.9)",fontWeight:700}}>{user.split("@")[0]}</button>
-          :<><button onClick={onAuth} style={{background:"none",border:"none",color:"rgba(255,255,255,0.75)",fontSize:13,fontWeight:600,padding:"5px 8px"}}>{t.login}</button>
-            <button onClick={()=>setPage("pub")} style={{background:"var(--red)",color:"#fff",border:"none",borderRadius:980,padding:"6px 14px",fontSize:13,fontWeight:700}}>{t.pub}</button></>}
+          ?<button onClick={()=>setPage("member")} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:980,padding:"6px 14px",fontSize:13,color:"rgba(255,255,255,0.9)",fontWeight:700}}>{user.split("@")[0]}</button>
+          :<><button onClick={onAuth} style={{background:"none",border:"none",color:"rgba(255,255,255,0.65)",fontSize:13,fontWeight:600,padding:"6px 10px"}}>{t.login}</button>
+            <button onClick={()=>setPage("pub")} style={{background:"var(--red)",color:"#fff",border:"none",borderRadius:980,padding:"7px 16px",fontSize:13,fontWeight:700}}>{t.pub}</button></>}
       </div>
     </div>
 
-    {/* Category nav bar */}
-    <div style={{borderTop:"1px solid rgba(255,255,255,0.06)",display:"flex",alignItems:"center",padding:"0 20px",height:40,gap:4,overflowX:"auto"}}>
+    {/* Category bar - bigger, clearer */}
+    <div style={{borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",alignItems:"center",padding:"0 16px",height:46,gap:2,overflowX:"auto"}}>
       {NAV_CATS.map(c=>(
         <button key={c.key} onClick={()=>goCategory(c.catI)}
-          style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,fontWeight:600,padding:"4px 14px",borderRadius:980,whiteSpace:"nowrap",transition:"all .15s"}}
-          onMouseEnter={e=>e.target.style.background="rgba(255,255,255,0.1)"}
-          onMouseLeave={e=>e.target.style.background="none"}>
-          {c.icon} {nl[c.key]}
+          style={{background:"none",border:"none",color:"rgba(255,255,255,0.72)",fontSize:14,fontWeight:600,padding:"7px 18px",borderRadius:10,whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:6,cursor:"pointer",letterSpacing:"-.01em"}}
+          onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.1)";e.currentTarget.style.color="#fff";}}
+          onMouseLeave={e=>{e.currentTarget.style.background="none";e.currentTarget.style.color="rgba(255,255,255,0.72)";}}>
+          <span style={{fontSize:15}}>{c.icon}</span><span>{nl[c.key]}</span>
         </button>
       ))}
-      {/* Featured with dropdown */}
-      <div style={{position:"relative"}}>
-        <button onClick={()=>setFeatOpen(!featOpen)}
-          style={{background:featOpen?"rgba(232,0,61,0.15)":"none",border:"none",color:featOpen?"var(--red)":"rgba(255,255,255,0.7)",fontSize:13,fontWeight:700,padding:"4px 14px",borderRadius:980,whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:4}}>
-          ⭐ {nl.featured} <span style={{fontSize:9,opacity:.6}}>▾</span>
+      <div style={{width:1,height:22,background:"rgba(255,255,255,0.1)",margin:"0 8px",flexShrink:0}}/>
+      {/* Featured */}
+      <div style={{position:"relative",flexShrink:0}}>
+        <button onClick={()=>{setFeatOpen(!featOpen);setRo(false);setLo(false);}}
+          style={{background:featOpen?"rgba(255,214,10,0.12)":"none",border:featOpen?"1px solid rgba(255,214,10,0.25)":"1px solid transparent",color:featOpen?"#FFD60A":"rgba(255,255,255,0.85)",fontSize:14,fontWeight:700,padding:"7px 18px",borderRadius:10,display:"flex",alignItems:"center",gap:6,cursor:"pointer",letterSpacing:"-.01em"}}>
+          <span style={{fontSize:15}}>⭐</span>{nl.featured}<span style={{fontSize:10,opacity:.5,marginLeft:2}}>{featOpen?"▲":"▼"}</span>
         </button>
-        {featOpen&&<div style={{position:"absolute",top:"calc(100% + 8px)",left:0,background:"var(--card)",borderRadius:14,boxShadow:"0 8px 40px rgba(0,0,0,0.22)",padding:8,minWidth:160,zIndex:600}} className="mo">
-          {[{icon:"🍜",key:"dining",page:"featured-dining"},{icon:"🏨",key:"hotels",page:"featured-hotels"},{icon:"✈️",key:"travel",page:"travel"}].map(item=>(
-            <button key={item.key} onClick={()=>{setFeatOpen(false);setPage(item.page);}}
-              style={{display:"flex",alignItems:"center",gap:10,width:"100%",background:"none",border:"none",borderRadius:10,padding:"10px 14px",fontSize:14,fontWeight:600,color:"var(--ink)",textAlign:"left",transition:"background .15s"}}
+        {featOpen&&<div style={{position:"absolute",top:"calc(100% + 10px)",left:0,background:"var(--card)",borderRadius:18,boxShadow:"0 20px 60px rgba(0,0,0,0.3)",padding:"10px",minWidth:240,zIndex:700,border:"1px solid var(--line)"}} className="mo">
+          <p style={{fontSize:11,fontWeight:700,color:"var(--ink4)",letterSpacing:".08em",textTransform:"uppercase",padding:"4px 10px 6px"}}>{nl.featured}</p>
+          {featItems.map(item=>(
+            <button key={item.key} onClick={()=>{setFeatOpen(false);setPage(item.pg);}}
+              style={{display:"flex",alignItems:"center",gap:12,width:"100%",background:"none",border:"none",borderRadius:12,padding:"10px 12px",textAlign:"left",cursor:"pointer"}}
               onMouseEnter={e=>e.currentTarget.style.background="var(--bg)"}
               onMouseLeave={e=>e.currentTarget.style.background="none"}>
-              <span style={{fontSize:20}}>{item.icon}</span>
-              <div>
-                <div style={{fontWeight:700,fontSize:13}}>{nl[item.key]}</div>
-                <div style={{fontSize:11,color:"var(--ink4)",fontWeight:400}}>{item.key==="dining"?(lang==="zh"?"华人餐厅推荐":lang==="zt"?"華人餐廳推薦":"Chinese Restaurants"):item.key==="hotels"?(lang==="zh"?"精选酒店":lang==="zt"?"精選酒店":"Curated Hotels"):(lang==="zh"?"AI城市旅游指南":lang==="zt"?"AI城市旅遊指南":"AI Travel Guide")}</div>
-              </div>
+              <div style={{width:42,height:42,borderRadius:12,background:"rgba(60,60,67,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{item.icon}</div>
+              <div><div style={{fontWeight:700,fontSize:14,color:"var(--ink)",marginBottom:2}}>{nl[item.key]}</div>
+              <div style={{fontSize:12,color:"var(--ink4)"}}>{item.desc[lang]||item.desc.en}</div></div>
             </button>
           ))}
         </div>}
@@ -432,7 +434,7 @@ function Detail({m,lang,setPage}){
       setLoadingR(false);
     });
   },[m.id]);
-  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:52}}>
+  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:100}}>
     <div style={{background:"#1C1C1E",padding:"48px 24px 40px"}}>
       <div style={{maxWidth:720,margin:"0 auto"}}>
         <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"rgba(255,255,255,0.75)",borderRadius:980,padding:"6px 14px",fontSize:12,fontWeight:700,marginBottom:24}}>{t.back}</button>
@@ -502,7 +504,7 @@ function Publish({lang,setPage,user}){
     setDone(true);setLoading(false);
   };
   if(done)return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:"0 24px",background:"var(--bg)"}}><div style={{textAlign:"center",maxWidth:340}}><div style={{width:56,height:56,borderRadius:"50%",background:"rgba(52,199,89,0.12)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg></div><h2 style={{fontSize:24,fontWeight:700,letterSpacing:"-.02em",marginBottom:10}}>{t.doneT}</h2><p style={{color:"var(--ink2)",fontSize:14,lineHeight:1.7,marginBottom:24}}>{t.doneS}</p><button onClick={()=>setPage("home")} style={{background:"var(--ink)",color:"#fff",border:"none",borderRadius:980,padding:"12px 26px",fontSize:14,fontWeight:700}}>{t.backHome}</button></div></div>;
-  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:52}}>
+  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:100}}>
     <div style={{background:"#1C1C1E",padding:"48px 24px 40px"}}><div style={{maxWidth:560,margin:"0 auto"}}>
       <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"rgba(255,255,255,0.75)",borderRadius:980,padding:"6px 14px",fontSize:12,fontWeight:700,marginBottom:24}}>{t.back}</button>
       <p style={{fontSize:11,fontWeight:700,color:"var(--red)",letterSpacing:".1em",textTransform:"uppercase",marginBottom:10}}>{lang==="en"?"Service Provider":"服务商入驻"}</p>
@@ -554,7 +556,7 @@ function Publish({lang,setPage,user}){
 
 function Member({lang,user,setPage,onLogout}){
   const t=T[lang];
-  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:52}}>
+  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:100}}>
     <div style={{background:"#1C1C1E",padding:"48px 24px 40px"}}><div style={{maxWidth:500,margin:"0 auto"}}>
       <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"rgba(255,255,255,0.75)",borderRadius:980,padding:"6px 14px",fontSize:12,fontWeight:700,marginBottom:24}}>{t.back}</button>
       <div style={{width:52,height:52,borderRadius:"50%",background:"var(--red)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,color:"#fff",fontWeight:700,marginBottom:14}}>{user[0].toUpperCase()}</div>
@@ -600,7 +602,7 @@ function Admin({lang,setPage}){
     setQ(p=>p.map(x=>x.id===id?{...x,status}:x));
     await updateAppStatus(id,status);
   };
-  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:52}}>
+  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:100}}>
     <div style={{background:"#1C1C1E",padding:"48px 24px 40px"}}><div style={{maxWidth:840,margin:"0 auto"}}>
       <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"rgba(255,255,255,0.75)",borderRadius:980,padding:"6px 14px",fontSize:12,fontWeight:700,marginBottom:24}}>{t.back}</button>
       <p style={{fontSize:11,fontWeight:700,color:"var(--red)",letterSpacing:".1em",textTransform:"uppercase",marginBottom:8}}>K1980</p>
@@ -693,7 +695,7 @@ function Travel({lang,setPage}){
 
   const tabs=tt.tabs;const icons=["🏛","🍜","ℹ️","🏢"];
 
-  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:52}}>
+  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:100}}>
     <div style={{background:"#1C1C1E",padding:"52px 24px 44px"}}>
       <div style={{maxWidth:700,margin:"0 auto"}}>
         <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"rgba(255,255,255,0.7)",borderRadius:980,padding:"6px 14px",fontSize:12,fontWeight:700,marginBottom:24}}>← {T[lang]?.back||"Back"}</button>
@@ -810,7 +812,7 @@ function Featured({lang,setPage,initTab}){
     {name:isZh?"斯凯城赌场酒店":"SkyCity Hotel",area:isZh?"天空塔旁":"Sky Tower",stars:4,price:"$$",desc:isZh?"毗邻天空塔，购物娱乐一步到位。":"Next to Sky Tower. Shopping and entertainment on your doorstep."},
   ];
 
-  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:92}}>
+  return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:100}}>
     <div style={{background:"#1C1C1E",padding:"40px 24px 32px"}}>
       <div style={{maxWidth:800,margin:"0 auto"}}>
         <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"rgba(255,255,255,0.7)",borderRadius:980,padding:"6px 14px",fontSize:12,fontWeight:700,marginBottom:20}}>← {T[lang]?.back||"Back"}</button>
