@@ -1,4 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import supabase, {
+  authSignUp, authSignIn, authSignOut, onAuthChange,
+  fetchMerchants, fetchReviews, submitReview,
+  submitApplication, fetchApplications, updateAppStatus,
+  fetchBookmarks, toggleBookmark
+} from "./supabase";
 
 const GS = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
@@ -110,17 +116,20 @@ const RVL={
 // Universal getter — picks right language for any merchant field
 const mG=(m,field,lang)=>{
   const fb=lang==="zh"||lang==="zt"?"zh":"en";
-  return (ML[m.id]?.[lang]?.[field]) || (ML[m.id]?.[fb]?.[field]) || "";
+  if(m._content) return(m._content[lang]?.[field])||(m._content[fb]?.[field])||"";
+  return(ML[m.id]?.[lang]?.[field])||(ML[m.id]?.[fb]?.[field])||"";
 };
-// Score object with translated keys
 const mScore=(m,lang)=>{
   const sk=mG(m,"sk",lang);
   const vals=Object.values(m.score);
   if(!sk||sk.length!==vals.length) return m.score;
   return Object.fromEntries(sk.map((k,i)=>[k,vals[i]]));
 };
-// Review text getter
-const rvT=(r,lang)=>RVL[r.mid]?.[lang]||RVL[r.mid]?.en||r.text;
+// Review text: DB reviews have .content, static have RVL lookup
+const rvT=(r,lang)=>{
+  if(r.content) return r.content; // DB review
+  return RVL[r.mid]?.[lang]||RVL[r.mid]?.en||r.text||"";
+};
 
 const RVS=[
   {id:1,user:"王**",mid:1,rating:5,time:"2小时前"},
@@ -167,7 +176,26 @@ function Nav({lang,setLang,region,setRegion,user,setPage,onAuth}){
 }
 
 function AuthModal({t,onClose,onLogin}){
-  const[mode,setMode]=useState("in");const[f,setF]=useState({email:"",pw:""});const u=(k,v)=>setF(p=>({...p,[k]:v}));
+  const[mode,setMode]=useState("in");
+  const[f,setF]=useState({email:"",pw:""});
+  const[loading,setLoading]=useState(false);
+  const[err,setErr]=useState("");
+  const u=(k,v)=>setF(p=>({...p,[k]:v}));
+
+  const submit=async()=>{
+    setLoading(true);setErr("");
+    try{
+      let res;
+      if(mode==="in") res=await authSignIn(f.email,f.pw);
+      else            res=await authSignUp(f.email,f.pw);
+      if(res.error) throw res.error;
+      const email=res.data?.user?.email||f.email;
+      onLogin(email);
+    }catch(e){
+      setErr(e.message||"Authentication failed");
+    }
+    setLoading(false);
+  };
   return <div style={{position:"fixed",inset:0,zIndex:900,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={onClose}>
     <div className="mo" style={{...SI.card,padding:"28px 24px",width:"100%",maxWidth:340,boxShadow:"0 24px 80px rgba(0,0,0,0.22)",position:"relative"}} onClick={e=>e.stopPropagation()}>
       <button onClick={onClose} style={{position:"absolute",top:14,right:16,background:"none",border:"none",fontSize:20,color:"var(--ink4)"}}>×</button>
@@ -175,7 +203,10 @@ function AuthModal({t,onClose,onLogin}){
       {mode==="up"&&<input placeholder={t.fullname} style={{...SI.inp,marginBottom:10}}/>}
       <input value={f.email} onChange={e=>u("email",e.target.value)} placeholder={t.email} type="email" style={{...SI.inp,marginBottom:10}}/>
       <input value={f.pw} onChange={e=>u("pw",e.target.value)} placeholder={t.pw} type="password" style={{...SI.inp,marginBottom:0}}/>
-      <button onClick={()=>onLogin(f.email||"user@example.com")} style={{width:"100%",background:"var(--red)",color:"#fff",border:"none",borderRadius:10,padding:"13px 0",fontSize:15,fontWeight:700,marginTop:14,marginBottom:12}}>{mode==="in"?t.signIn:t.signUp}</button>
+      {err&&<p style={{fontSize:12,color:"var(--red)",marginBottom:8,textAlign:"center"}}>{err}</p>}
+      <button onClick={submit} disabled={loading} style={{width:"100%",background:"var(--red)",color:"#fff",border:"none",borderRadius:10,padding:"13px 0",fontSize:15,fontWeight:700,marginTop:14,marginBottom:12,opacity:loading?0.7:1}}>
+        {loading?"...":(mode==="in"?t.signIn:t.signUp)}
+      </button>
       <p style={{textAlign:"center",fontSize:13,color:"var(--ink3)"}}>{mode==="in"?t.noAcc:t.hasAcc}{" "}<button onClick={()=>setMode(mode==="in"?"up":"in")} style={{background:"none",border:"none",color:"var(--blue)",fontWeight:700,fontSize:13}}>{mode==="in"?t.signUp:t.signIn}</button></p>
     </div>
   </div>;
@@ -184,13 +215,22 @@ function AuthModal({t,onClose,onLogin}){
 function Home({lang,region,setPage,setDetail}){
   const t=T[lang];const isZh=lang==="zh"||lang==="zt";
   const[q,setQ]=useState("");const[catI,setCatI]=useState(null);
+  const[merchants,setMerchants]=useState(MS);
+  const[loadingM,setLoadingM]=useState(true);
   const nm=m=>isZh?m.name:m.nameEn;
   const sb=m=>mG(m,"sub",lang);
-  const shown=MS.filter(m=>
-    (region==="all"||m.regions.includes(region))&&
-    (catI===null||m.catI===catI)&&
-    (!q||m.name.toLowerCase().includes(q.toLowerCase())||m.nameEn.toLowerCase().includes(q.toLowerCase())||t.cats[m.catI]?.toLowerCase().includes(q.toLowerCase()))
-  );
+
+  // Fetch from Supabase, fall back to static MS if empty/error
+  useEffect(()=>{
+    setLoadingM(true);
+    fetchMerchants({region,catI,query:q}).then(({data,error})=>{
+      if(!error&&data&&data.length>0) setMerchants(data);
+      else setMerchants(MS.filter(m=>(region==="all"||m.regions.includes(region))&&(catI===null||m.catI===catI)&&(!q||m.name.toLowerCase().includes(q.toLowerCase())||m.nameEn.toLowerCase().includes(q.toLowerCase()))));
+      setLoadingM(false);
+    });
+  },[region,catI,q]);
+
+  const shown=merchants;
   return <main>
     <section style={{background:"#1C1C1E",minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"120px 24px 80px",textAlign:"center",position:"relative",overflow:"hidden"}}>
       <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 55% 45% at 50% 62%,rgba(232,0,61,0.14) 0%,transparent 70%)",pointerEvents:"none"}}/>
@@ -312,8 +352,18 @@ function Home({lang,region,setPage,setDetail}){
 
 function Detail({m,lang,setPage}){
   const t=T[lang];const isZh=lang==="zh"||lang==="zt";
-  const rvs=RVS.filter(r=>r.mid===m.id);
+  const[reviews,setReviews]=useState([]);
+  const[loadingR,setLoadingR]=useState(true);
   const sc=mScore(m,lang);
+
+  useEffect(()=>{
+    fetchReviews(m.id).then(({data})=>{
+      // If DB has reviews use them, else fall back to static RVS
+      if(data&&data.length>0) setReviews(data);
+      else setReviews(RVS.filter(r=>r.mid===m.id));
+      setLoadingR(false);
+    });
+  },[m.id]);
   return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:52}}>
     <div style={{background:"#1C1C1E",padding:"48px 24px 40px"}}>
       <div style={{maxWidth:720,margin:"0 auto"}}>
@@ -332,7 +382,7 @@ function Detail({m,lang,setPage}){
         <div style={{display:"flex",flexDirection:"column",gap:12}}>
           {[{ttl:t.intro,body:<><p style={{fontSize:14,color:"var(--ink2)",lineHeight:1.78,marginBottom:16}}>{mG(m,"detail",lang)}</p><p style={{fontSize:11,fontWeight:700,color:"var(--ink4)",letterSpacing:".08em",textTransform:"uppercase",marginBottom:10}}>{t.scope}</p><div style={{display:"flex",flexWrap:"wrap",gap:8}}>{mG(m,"svcs",lang).map(s=><span key={s} style={{fontSize:13,padding:"6px 13px",borderRadius:980,background:"var(--bg)",color:"var(--ink2)",border:"1px solid var(--line)"}}>{s}</span>)}</div></>},
             {ttl:t.audit,body:<>{Object.entries(sc).map(([k,v])=><div key={k} style={{marginBottom:14}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13,color:"var(--ink2)",fontWeight:500}}>{k}</span><span style={{fontSize:13,fontWeight:700}}>{v}</span></div><Abar pct={v}/></div>)}</>},
-            {ttl:t.revT,body:<>{(rvs.length?rvs:RVS).map((r,i,a)=><div key={r.id} style={{paddingBottom:14,marginBottom:14,borderBottom:i<a.length-1?"1px solid var(--line)":"none"}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}><div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:30,height:30,borderRadius:"50%",background:"var(--bg)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13}}>{r.user[0]}</div><div><div style={{fontWeight:700,fontSize:13}}>{r.user}</div><Stars n={r.rating} sz={11}/></div></div><span style={{fontSize:11,color:"var(--ink4)"}}>{r.time}</span></div><p style={{fontSize:13,color:"var(--ink2)",lineHeight:1.6,paddingLeft:40}}>{rvT(r,lang)}</p></div>)}</>}
+            {ttl:t.revT,body:<>{(reviews.length?reviews:(RVS.filter(r=>r.mid===m.id).length?RVS.filter(r=>r.mid===m.id):RVS.slice(0,2))).map((r,i,a)=><div key={r.id||i} style={{paddingBottom:14,marginBottom:14,borderBottom:i<a.length-1?"1px solid var(--line)":"none"}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}><div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:30,height:30,borderRadius:"50%",background:"var(--bg)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13}}>{(r.user_display||r.user||"?")[0]}</div><div><div style={{fontWeight:700,fontSize:13}}>{r.user_display||r.user}</div><Stars n={r.rating} sz={11}/></div></div><span style={{fontSize:11,color:"var(--ink4)"}}>{r.time||new Date(r.created_at||Date.now()).toLocaleDateString()}</span></div><p style={{fontSize:13,color:"var(--ink2)",lineHeight:1.6,paddingLeft:40}}>{rvT(r,lang)}</p></div>)}</>}
           ].map(({ttl,body})=>(
             <div key={ttl} style={{...SI.card,borderRadius:16,overflow:"hidden"}}>
               <div style={{padding:"13px 18px",borderBottom:"1px solid var(--line)"}}><h3 style={{fontSize:15,fontWeight:700}}>{ttl}</h3></div>
@@ -359,10 +409,30 @@ function Detail({m,lang,setPage}){
   </div>;
 }
 
-function Publish({lang,setPage}){
-  const t=T[lang];const[tier,setTier]=useState("free");const[f,setF]=useState({name:"",cat:"",desc:"",tel:"",wx:""});
-  const[docs,setDocs]=useState({biz:false,prof:false,id:false,extra:false});const[done,setDone]=useState(false);
-  const u=(k,v)=>setF(p=>({...p,[k]:v}));const dp=[docs.biz,docs.prof,docs.id,docs.extra].filter(Boolean).length*25;
+function Publish({lang,setPage,user}){
+  const t=T[lang];
+  const[tier,setTier]=useState("free");
+  const[f,setF]=useState({name:"",cat:"",desc:"",tel:"",wx:""});
+  const[docs,setDocs]=useState({biz:false,prof:false,id:false,extra:false});
+  const[done,setDone]=useState(false);
+  const[loading,setLoading]=useState(false);
+  const[err,setErr]=useState("");
+  const u=(k,v)=>setF(p=>({...p,[k]:v}));
+  const dp=[docs.biz,docs.prof,docs.id,docs.extra].filter(Boolean).length*25;
+
+  const handleSubmit=async()=>{
+    if(!f.name.trim()){setErr(t.fReq);return;}
+    setLoading(true);setErr("");
+    const payload={
+      company_name:f.name, description:f.desc,
+      tel:f.tel, wechat:f.wx, tier,
+      docs_biz:docs.biz, docs_prof:docs.prof,
+      docs_id:docs.id, docs_extra:docs.extra,
+    };
+    const{error}=await submitApplication(payload, user?.id||null);
+    if(error){setErr(error.message);setLoading(false);return;}
+    setDone(true);setLoading(false);
+  };
   if(done)return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:"0 24px",background:"var(--bg)"}}><div style={{textAlign:"center",maxWidth:340}}><div style={{width:56,height:56,borderRadius:"50%",background:"rgba(52,199,89,0.12)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg></div><h2 style={{fontSize:24,fontWeight:700,letterSpacing:"-.02em",marginBottom:10}}>{t.doneT}</h2><p style={{color:"var(--ink2)",fontSize:14,lineHeight:1.7,marginBottom:24}}>{t.doneS}</p><button onClick={()=>setPage("home")} style={{background:"var(--ink)",color:"#fff",border:"none",borderRadius:980,padding:"12px 26px",fontSize:14,fontWeight:700}}>{t.backHome}</button></div></div>;
   return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:52}}>
     <div style={{background:"#1C1C1E",padding:"48px 24px 40px"}}><div style={{maxWidth:560,margin:"0 auto"}}>
@@ -405,7 +475,10 @@ function Publish({lang,setPage}){
           </div>
         </div>
         <p style={{fontSize:11,color:"var(--ink3)",lineHeight:1.6}}>{t.terms}</p>
-        <button onClick={()=>setDone(true)} style={{background:"var(--red)",color:"#fff",border:"none",borderRadius:10,padding:"13px 0",fontSize:15,fontWeight:700}}>{t.submitBtn}</button>
+        {err&&<p style={{fontSize:12,color:"var(--red)",marginBottom:8}}>{err}</p>}
+        <button onClick={handleSubmit} disabled={loading} style={{background:"var(--red)",color:"#fff",border:"none",borderRadius:10,padding:"13px 0",fontSize:15,fontWeight:700,opacity:loading?0.7:1}}>
+          {loading?"...":(t.submitBtn)}
+        </button>
       </div>
     </div>
   </div>;
@@ -437,8 +510,28 @@ function Member({lang,user,setPage,onLogout}){
 }
 
 function Admin({lang,setPage}){
-  const t=T[lang];const[q,setQ]=useState(AQ);const act=(id,s)=>setQ(p=>p.map(x=>x.id===id?{...x,status:s}:x));
+  const t=T[lang];
+  const[q,setQ]=useState(AQ);
+  const[loading,setLoading]=useState(true);
   const sc={pending:"#FF9F0A",approved:"var(--green)",rejected:"var(--red)"};
+
+  useEffect(()=>{
+    fetchApplications().then(({data,error})=>{
+      if(!error&&data&&data.length>0) setQ(data.map(a=>({
+        id:a.id, name:a.company_name, catEn:a.cat_en||"",
+        region:a.region||"", tier:a.tier||"free",
+        date:(a.submitted_at||"").slice(0,10),
+        docs:{biz:a.docs_biz,prof:a.docs_prof,id:a.docs_id,extra:a.docs_extra},
+        status:a.status||"pending"
+      })));
+      setLoading(false);
+    });
+  },[]);
+
+  const act=async(id,status)=>{
+    setQ(p=>p.map(x=>x.id===id?{...x,status}:x));
+    await updateAppStatus(id,status);
+  };
   return <div style={{background:"var(--bg)",minHeight:"100vh",paddingTop:52}}>
     <div style={{background:"#1C1C1E",padding:"48px 24px 40px"}}><div style={{maxWidth:840,margin:"0 auto"}}>
       <button onClick={()=>setPage("home")} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"rgba(255,255,255,0.75)",borderRadius:980,padding:"6px 14px",fontSize:12,fontWeight:700,marginBottom:24}}>{t.back}</button>
@@ -515,23 +608,18 @@ function Travel({lang,setPage}){
   const generate=async()=>{
     if(!city.trim())return;
     setLoading(true);setErr("");setResult(null);
-    const langName={zh:"Chinese (Simplified)",zt:"Chinese (Traditional)",en:"English",ja:"Japanese",ko:"Korean",es:"Spanish",fr:"French",ar:"Arabic"}[lang]||"English";
-    const prompt=`You are a travel assistant for the Chinese community. Generate a city guide for "${city}" in ${langName}. Return ONLY valid JSON (no markdown):
-{"city":"City, Country","summary":"2-sentence overview","attractions":[{"name":"","desc":"","tip":"","emoji":"🏛"}],"restaurants":[{"name":"","cuisine":"","area":"","priceRange":"$$","emoji":"🍜"}],"practical":[{"category":"","info":"","emoji":"ℹ️"}],"services":[{"type":"","note":"","emoji":"🏢"}]}
-Include 4 attractions, 4 Chinese restaurants, 5 practical tips, 3 service types. All text in ${langName}.`;
-
     try{
-      const res=await fetch("https://api.anthropic.com/v1/messages",{
+      // Calls our secure Vercel serverless function — API key never exposed to browser
+      const res=await fetch("/api/travel",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,tools:[{type:"web_search_20250305",name:"web_search"}],messages:[{role:"user",content:prompt}]})
+        body:JSON.stringify({city,lang})
       });
+      if(!res.ok) throw new Error("Server error");
       const data=await res.json();
-      const text=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
-      const clean=text.replace(/```json|```/g,"").trim();
-      const s=clean.indexOf("{");const e=clean.lastIndexOf("}")+1;
-      setResult(JSON.parse(clean.slice(s,e)));
-    }catch{setErr("AI generation failed. Please try again.");}
+      if(data.error) throw new Error(data.error);
+      setResult(data);
+    }catch(e){setErr(e.message||"AI generation failed. Please try again.");}
     setLoading(false);
   };
 
@@ -637,16 +725,31 @@ export default function App(){
   const[lang,setLang]=useState("zh");const[region,setRegion]=useState("all");
   const[page,setPage]=useState("home");const[detail,setDetail]=useState(null);
   const[user,setUser]=useState(null);const[showAuth,setShowAuth]=useState(false);
+
+  // Restore session on mount, listen for auth changes
+  useEffect(()=>{
+    onAuthChange(session=>{
+      if(session?.user) setUser(session.user.email);
+      else setUser(null);
+    });
+  },[]);
+
   useEffect(()=>{window.scrollTo(0,0);},[page]);
-  const isRTL = lang==="ar";
+
+  const handleLogout=async()=>{
+    await authSignOut();
+    setUser(null);setPage("home");
+  };
+
+  const isRTL=lang==="ar";
   return <div dir={isRTL?"rtl":"ltr"} style={{textAlign:isRTL?"right":"left"}}>
     <style>{GS}</style>
     <Nav lang={lang} setLang={setLang} region={region} setRegion={setRegion} user={user} setPage={setPage} onAuth={()=>setShowAuth(true)}/>
     {showAuth&&<AuthModal t={T[lang]} onClose={()=>setShowAuth(false)} onLogin={email=>{setUser(email);setShowAuth(false);setPage("member");}}/>}
     {page==="home"   &&<Home   lang={lang} region={region} setPage={setPage} setDetail={setDetail}/>}
     {page==="detail" &&detail &&<Detail m={detail} lang={lang} setPage={setPage}/>}
-    {page==="pub"    &&<Publish lang={lang} setPage={setPage}/>}
-    {page==="member" &&user   &&<Member lang={lang} user={user} setPage={setPage} onLogout={()=>{setUser(null);setPage("home");}}/>}
+    {page==="pub"    &&<Publish lang={lang} setPage={setPage} user={user?{email:user}:null}/>}
+    {page==="member" &&user   &&<Member lang={lang} user={user} setPage={setPage} onLogout={handleLogout}/>}
     {page==="admin"  &&<Admin  lang={lang} setPage={setPage}/>}
     {page==="travel" &&<Travel lang={lang} setPage={setPage}/>}
   </div>;
