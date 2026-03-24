@@ -301,20 +301,25 @@ function Home({lang,region,setPage,setDetail,initCatI}){
   },[region,catI,q]);
 
   const shown=merchants;
-  return <main>
-    <section style={{background:"#1C1C1E",minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"120px 24px 80px",textAlign:"center",position:"relative",overflow:"hidden"}}>
-      <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 55% 45% at 50% 62%,rgba(232,0,61,0.14) 0%,transparent 70%)",pointerEvents:"none"}}/>
-      <h1 className="u0" style={{fontSize:"clamp(32px,6vw,64px)",fontWeight:800,color:"#fff",lineHeight:1.1,letterSpacing:"-.02em",marginBottom:16,maxWidth:560}}>
-        {t.h1}<br/><span style={{color:"var(--red)"}}>{t.h2}</span>
-      </h1>
-      <p className="u1" style={{fontSize:15,color:"rgba(255,255,255,0.75)",maxWidth:400,lineHeight:1.4,marginBottom:10,fontWeight:500}}>{t.heroTag}</p>
-      <p className="u2" style={{fontSize:14,color:"rgba(255,255,255,0.45)",maxWidth:400,lineHeight:1.7,marginBottom:48}}>{t.heroSub}<br/>{t.heroSlogan}</p>
-      <div className="u3" style={{width:"100%",maxWidth:520,display:"flex",background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:14,overflow:"hidden",backdropFilter:"blur(12px)"}}>
-        <input value={q} onChange={e=>setQ(e.target.value)} placeholder={t.sph} style={{flex:1,background:"transparent",border:"none",outline:"none",padding:"15px 18px",fontSize:15,color:"#fff"}}/>
-        <button style={{background:"var(--red)",color:"#fff",border:"none",padding:"0 26px",fontSize:14,fontWeight:700,flexShrink:0}}>{t.sbtn}</button>
-      </div>
-      <div className="u4" style={{display:"flex",gap:8,marginTop:16,flexWrap:"wrap",justifyContent:"center"}}>
-        {t.hot.map(tag=><button key={tag} onClick={()=>setQ(tag)} style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.1)",color:"rgba(255,255,255,0.7)",fontSize:13,borderRadius:980,padding:"6px 15px"}}>{tag}</button>)}
+  return <main style={{paddingTop:100}}>
+    {/* Compact hero - search bar only, no full screen */}
+    <section style={{background:"#1C1C1E",padding:"32px 24px 28px",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
+      <div style={{maxWidth:840,margin:"0 auto"}}>
+        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:18,flexWrap:"wrap"}}>
+          <div>
+            <h1 style={{fontSize:"clamp(20px,2.5vw,28px)",fontWeight:800,color:"#fff",lineHeight:1.15,letterSpacing:"-.02em"}}>
+              {t.h1} <span style={{color:"var(--red)"}}>{t.h2}</span>
+            </h1>
+            <p style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginTop:4}}>{t.heroTag}</p>
+          </div>
+        </div>
+        <div style={{display:"flex",background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:12,overflow:"hidden",maxWidth:620}}>
+          <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==="Enter"&&null} placeholder={t.sph} style={{flex:1,background:"transparent",border:"none",outline:"none",padding:"13px 16px",fontSize:14,color:"#fff"}}/>
+          <button style={{background:"var(--red)",color:"#fff",border:"none",padding:"0 22px",fontSize:14,fontWeight:700,flexShrink:0}}>{t.sbtn}</button>
+        </div>
+        <div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}>
+          {t.hot.map(tag=><button key={tag} onClick={()=>setQ(tag)} style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.1)",color:"rgba(255,255,255,0.65)",fontSize:12,borderRadius:980,padding:"5px 13px"}}>{tag}</button>)}
+        </div>
       </div>
     </section>
 
@@ -409,12 +414,23 @@ function Home({lang,region,setPage,setDetail,initCatI}){
       </div>
     </section>
 
-    <footer style={{borderTop:"1px solid var(--line)",padding:"28px 24px",textAlign:"center"}}>
-      <div style={{marginBottom:8}}><Logo sz={17} dk/></div>
-      <p style={{fontSize:12,color:"var(--ink3)",marginBottom:12}}>{t.tagline}</p>
-      <div style={{display:"flex",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
-        {["Life1980","K1980"].map(l=><span key={l} style={{fontSize:12,color:"var(--ink4)"}}>{l}</span>)}
-        <button onClick={()=>setPage("admin")} style={{background:"none",border:"none",fontSize:12,color:"var(--ink4)"}}>{t.adm}</button>
+    <footer style={{background:"#1C1C1E",borderTop:"1px solid rgba(255,255,255,0.08)",padding:"36px 24px 28px"}}>
+      <div style={{maxWidth:840,margin:"0 auto"}}>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",flexWrap:"wrap",gap:24,marginBottom:28}}>
+          <div>
+            <div style={{marginBottom:10}}><Logo sz={22} /></div>
+            <p style={{fontSize:13,color:"rgba(255,255,255,0.5)",lineHeight:1.6,maxWidth:280}}>{t.heroTag}</p>
+            <p style={{fontSize:12,color:"rgba(255,255,255,0.3)",marginTop:6}}>{t.heroSub} · {t.heroSlogan}</p>
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:8,textAlign:"right"}}>
+            <a href="https://www.life1980.com" style={{fontSize:13,color:"rgba(255,255,255,0.5)",textDecoration:"none"}}>🌐 www.life1980.com</a>
+            <a href="mailto:hello@life1980.com" style={{fontSize:13,color:"rgba(255,255,255,0.5)",textDecoration:"none"}}>✉️ hello@life1980.com</a>
+          </div>
+        </div>
+        <div style={{borderTop:"1px solid rgba(255,255,255,0.07)",paddingTop:18,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+          <p style={{fontSize:11,color:"rgba(255,255,255,0.25)"}}>{t.tagline} · © 2025 Life1980</p>
+          <button onClick={()=>setPage("admin")} style={{background:"none",border:"none",fontSize:11,color:"rgba(255,255,255,0.2)",cursor:"pointer"}}>{t.adm}</button>
+        </div>
       </div>
     </footer>
   </main>;
