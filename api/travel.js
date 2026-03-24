@@ -6,12 +6,11 @@ export default async function handler(req, res) {
 
   const langName = {zh:'Chinese (Simplified)',zt:'Chinese (Traditional)',en:'English',ja:'Japanese',ko:'Korean',es:'Spanish',fr:'French',ar:'Arabic'}[lang]||'English'
 
-  const prompt = `Generate a travel guide for the city "${city}" in ${langName}.
-You MUST return ONLY a valid JSON object. No markdown, no backticks, no explanation.
-Use double quotes for all strings. Do not use single quotes. Escape any special characters.
-JSON structure:
-{"city":"string","summary":"string","attractions":[{"name":"string","desc":"string","tip":"string","emoji":"string"}],"restaurants":[{"name":"string","cuisine":"string","area":"string","priceRange":"string","emoji":"string"}],"practical":[{"category":"string","info":"string","emoji":"string"}],"services":[{"type":"string","note":"string","emoji":"string"}]}
-Include exactly 4 attractions, 4 restaurants, 5 practical tips, 3 services. All text in ${langName}.`
+  const prompt = `Generate a travel guide for "${city}" in ${langName}.
+Return ONLY a valid JSON object. No markdown. No backticks. No emoji characters anywhere.
+Exact structure required:
+{"city":"city name and country","summary":"2 sentence overview","attractions":[{"name":"name","desc":"description","tip":"insider tip"}],"restaurants":[{"name":"name","cuisine":"cuisine type","area":"neighborhood","priceRange":"$ or $$ or $$$"}],"practical":[{"category":"category name","info":"helpful information"}],"services":[{"type":"service type","note":"brief note"}]}
+Include 4 attractions, 4 restaurants, 5 practical items, 3 services. All text in ${langName}. No special characters that could break JSON.`
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -35,14 +34,11 @@ Include exactly 4 attractions, 4 restaurants, 5 practical tips, 3 services. All 
     }
 
     const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('')
-
-    // Extract JSON robustly
     const start = text.indexOf('{')
     const end = text.lastIndexOf('}') + 1
-    if (start === -1 || end === 0) throw new Error('No JSON found in response')
+    if (start === -1 || end === 0) throw new Error('No JSON in response')
 
-    const jsonStr = text.slice(start, end)
-    const result = JSON.parse(jsonStr)
+    const result = JSON.parse(text.slice(start, end))
     res.status(200).json(result)
 
   } catch(err) {
