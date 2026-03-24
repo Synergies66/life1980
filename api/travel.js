@@ -1,12 +1,18 @@
 // api/travel.js  — Vercel Serverless Function
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
-  const { city, lang } = req.body
+  const { city, lang } = req.body || {}
   if (!city) return res.status(400).json({ error: 'city required' })
+
   const langName = {zh:'Chinese (Simplified)',zt:'Chinese (Traditional)',en:'English',ja:'Japanese',ko:'Korean',es:'Spanish',fr:'French',ar:'Arabic'}[lang]||'English'
-  const prompt = `Generate a travel guide for "${city}" in ${langName}. Return ONLY valid JSON (no markdown):
-{"city":"City, Country","summary":"2-sentence overview for Chinese visitors","attractions":[{"name":"","desc":"","tip":"","emoji":"🏛"}],"restaurants":[{"name":"","cuisine":"","area":"","priceRange":"$$","emoji":"🍜"}],"practical":[{"category":"","info":"","emoji":"ℹ️"}],"services":[{"type":"","note":"","emoji":"🏢"}]}
-Include 4 attractions, 4 Chinese/Asian restaurants, 5 practical tips (transport/currency/safety/emergency/timezone), 3 Chinese community service types. All text in ${langName}.`
+
+  const prompt = `Generate a travel guide for the city "${city}" in ${langName}.
+You MUST return ONLY a valid JSON object. No markdown, no backticks, no explanation.
+Use double quotes for all strings. Do not use single quotes. Escape any special characters.
+JSON structure:
+{"city":"string","summary":"string","attractions":[{"name":"string","desc":"string","tip":"string","emoji":"string"}],"restaurants":[{"name":"string","cuisine":"string","area":"string","priceRange":"string","emoji":"string"}],"practical":[{"category":"string","info":"string","emoji":"string"}],"services":[{"type":"string","note":"string","emoji":"string"}]}
+Include exactly 4 attractions, 4 restaurants, 5 practical tips, 3 services. All text in ${langName}.`
+
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -17,19 +23,30 @@ Include 4 attractions, 4 Chinese/Asian restaurants, 5 practical tips (transport/
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1200,
+        max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }],
       }),
     })
+
     const data = await response.json()
-    if (data.error) throw new Error(data.error.message)
+    if (!response.ok || data.error) {
+      console.error('Anthropic error:', JSON.stringify(data))
+      return res.status(500).json({ error: 'AI service error' })
+    }
+
     const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('')
-    const clean = text.replace(/```json|```/g,'').trim()
-    const s = clean.indexOf('{'); const e = clean.lastIndexOf('}')+1
-    const result = JSON.parse(clean.slice(s,e))
+
+    // Extract JSON robustly
+    const start = text.indexOf('{')
+    const end = text.lastIndexOf('}') + 1
+    if (start === -1 || end === 0) throw new Error('No JSON found in response')
+
+    const jsonStr = text.slice(start, end)
+    const result = JSON.parse(jsonStr)
     res.status(200).json(result)
+
   } catch(err) {
     console.error('travel error:', err.message)
-    res.status(500).json({ error: 'AI generation failed' })
+    res.status(500).json({ error: err.message })
   }
 }
