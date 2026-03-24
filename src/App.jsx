@@ -229,11 +229,9 @@ function Nav({lang,setLang,region,setRegion,user,setPage,setCatFilter,onAuth}){
         {featOpen&&<div style={{position:"absolute",top:"calc(100% + 10px)",left:0,background:"var(--card)",borderRadius:18,boxShadow:"0 20px 60px rgba(0,0,0,0.3)",padding:"10px",minWidth:240,zIndex:700,border:"1px solid var(--line)"}} className="mo">
           <p style={{fontSize:11,fontWeight:700,color:"var(--ink4)",letterSpacing:".08em",textTransform:"uppercase",padding:"4px 10px 6px"}}>{nl.featured}</p>
           {featItems.map(item=>(
-            <button key={item.key} onClick={()=>{setFeatOpen(false);setPage(item.pg);}}
-              style={{display:"flex",alignItems:"center",gap:12,width:"100%",background:"none",border:"none",borderRadius:12,padding:"10px 12px",textAlign:"left",cursor:"pointer"}}
-              onMouseEnter={e=>e.currentTarget.style.background="var(--bg)"}
-              onMouseLeave={e=>e.currentTarget.style.background="none"}>
-              <div style={{width:42,height:42,borderRadius:12,background:"rgba(60,60,67,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{item.icon}</div>
+            <button key={item.key} onClick={(e)=>{e.stopPropagation();setFeatOpen(false);setPage(item.pg);}}
+              style={{display:"flex",alignItems:"center",gap:12,width:"100%",background:"none",border:"none",borderRadius:12,padding:"12px 14px",textAlign:"left",cursor:"pointer",transition:"background .1s"}}>
+              <div style={{width:44,height:44,borderRadius:12,background:"var(--bg)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{item.icon}</div>
               <div><div style={{fontWeight:700,fontSize:14,color:"var(--ink)",marginBottom:2}}>{nl[item.key]}</div>
               <div style={{fontSize:12,color:"var(--ink4)"}}>{item.desc[lang]||item.desc.en}</div></div>
             </button>
@@ -323,16 +321,7 @@ function Home({lang,region,setPage,setDetail,initCatI}){
       </div>
     </section>
 
-    <section style={{background:"var(--bg)",padding:"72px 24px"}}>
-      <div style={{maxWidth:840,margin:"0 auto"}}>
-        <SH lbl={t.catT} ttl={t.catT}/>
-        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-          {t.cats.map((c,i)=><button key={c} onClick={()=>setCatI(catI===i?null:i)} style={{padding:"10px 22px",borderRadius:980,background:catI===i?"var(--ink)":"var(--card)",color:catI===i?"#fff":"var(--ink2)",border:catI===i?"none":"1px solid var(--line)",fontSize:14,fontWeight:600,boxShadow:"0 1px 4px rgba(0,0,0,0.06)",transition:"all .18s"}}>{c}</button>)}
-        </div>
-      </div>
-    </section>
-
-    <section style={{background:"var(--bg)",padding:"0 24px 72px"}}>
+    <section style={{background:"var(--bg)",padding:"40px 24px 0"}}>
       <div style={{maxWidth:840,margin:"0 auto"}}>
         <SH lbl={t.featT} ttl={catI!==null?t.cats[catI]:t.featT}/>
         <div style={{...SI.card,borderRadius:16,overflow:"hidden",border:"1px solid var(--line)"}}>
