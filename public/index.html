@@ -71,7 +71,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;
 @keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
 /*===== HERO =====*/
-.hero{background:var(--surf);padding:52px 24px 44px;text-align:center;position:relative;overflow:hidden}
+.hero{background:var(--surf);padding:44px 24px 36px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(ellipse 800px 400px at 50% -60px,rgba(59,130,246,.06) 0%,transparent 70%)}
 .reg-pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
@@ -567,12 +567,9 @@ tr:hover td{background:var(--surf2)}
     <p class="hero-sub" id="h-sub" data-i18n-html="hero_sub">移民、留学、房产、律师——<br>所有生活服务，一处全搞定</p>
     <div class="srch-wrap">
       <span class="srch-ico">🔍</span>
-      <input class="srch-box" id="srch-box" type="text" placeholder="搜索服务商...">
-      <button class="srch-btn" id="srch-btn" data-i18n="srch_btn">搜索</button>
-    </div>
-    <div class="hot-row">
-      <span class="ht-lbl" data-i18n="hot_lbl">热搜：</span>
-      <span id="hot-tags-wrap"></span>
+      <input class="srch-box" id="srch-box" type="text" placeholder="搜索服务商..."
+        onkeydown="if(event.key==='Enter')doSearch(this.value)">
+      <button class="srch-btn" id="srch-btn" data-i18n="srch_btn" onclick="doSearch(document.getElementById('srch-box').value)">搜索</button>
     </div>
   </div>
   <div class="cat-bar" id="catbar"><div class="cat-inner" id="cat-inner"></div></div>
@@ -1630,32 +1627,8 @@ const REGIONS = {
 };
 
 // Service providers data (shared state)
-let SERVICES = [
-  {id:1,name:'ABC 移民顾问',cat:'imm',region:'NZ-AKL',time:'09:32',status:'approved',lawyerStatus:'none',
-   desc:'专注新西兰技术移民与投资移民，10年以上从业经验，成功案例500+',uid:'U1001',
-   docs:['biz','imm','id'],missing:['ref'],risk:[],rating:4.9,reviews:128,featured:true},
-  {id:2,name:'XYZ 律师事务所',cat:'law',region:'AU-SYD',time:'10:15',status:'pending',lawyerStatus:'pending',
-   desc:'华人律师团队，专注移民法、商业法，中英双语服务',uid:'U1002',
-   docs:['biz','law','id'],missing:['ref'],risk:[],rating:4.8,reviews:112,featured:false},
-  {id:3,name:'奥克兰房产专家',cat:'prop',region:'NZ-AKL',time:'11:00',status:'approved',lawyerStatus:'none',
-   desc:'专业服务华人买家，奥克兰全区覆盖，中文全程陪同',uid:'U1003',
-   docs:['biz','re','id','ref'],missing:[],risk:[],rating:4.8,reviews:96,featured:true},
-  {id:4,name:'DEF 留学顾问',cat:'edu',region:'CA-YYZ',time:'11:45',status:'pending',lawyerStatus:'none',
-   desc:'澳新英美留学全程规划，申请成功率业内领先',uid:'U1004',
-   docs:['biz','assoc'],missing:['id','ref'],risk:[],rating:4.7,reviews:74,featured:false},
-  {id:5,name:'伦敦金融服务',cat:'fin',region:'UK-LON',time:'12:10',status:'rejected',lawyerStatus:'none',
-   desc:'华人专属理财规划，英国本地执牌',uid:'U1005',
-   docs:['biz'],missing:['law','id','ref'],risk:['complaints'],rating:4.2,reviews:31,featured:false},
-  {id:6,name:'新加坡移民中心',cat:'imm',region:'SG',time:'13:30',status:'approved',lawyerStatus:'passed',
-   desc:'新加坡EP、PR全类别申请，成功率95%以上',uid:'U1006',
-   docs:['biz','imm','id','ref','assoc'],missing:[],risk:[],rating:4.9,reviews:203,featured:true},
-  {id:7,name:'温哥华华人医疗',cat:'med',region:'CA-YVR',time:'14:00',status:'pending',lawyerStatus:'none',
-   desc:'全科华人诊所，中文诊疗，接受大部分保险',uid:'U1007',
-   docs:['biz','id','assoc'],missing:['ref'],risk:[],rating:4.7,reviews:89,featured:false},
-  {id:8,name:'悉尼搬家专家',cat:'move',region:'AU-SYD',time:'14:30',status:'pending',lawyerStatus:'none',
-   desc:'专业搬家服务，覆盖悉尼全区，收费透明',uid:'U1008',
-   docs:['biz','id'],missing:['ref','assoc'],risk:['docs_abnormal'],rating:3.8,reviews:22,featured:false},
-];
+// SERVICES is populated at boot from REGIONAL_SEED (see initServices below)
+let SERVICES = [];
 
 let USERS = [
   {id:'U1001',name:'李小华',email:'lxh@email.com',reg:'2024-01-15',posts:3,status:'normal'},
@@ -1664,23 +1637,42 @@ let USERS = [
   {id:'U1004',name:'陈留学',email:'clx@email.com',reg:'2024-03-01',posts:1,status:'normal'},
   {id:'U1005',name:'赵金融',email:'zjr@email.com',reg:'2023-12-10',posts:1,status:'banned'},
   {id:'U1006',name:'林移民',email:'lym@email.com',reg:'2023-11-05',posts:4,status:'normal'},
-  {id:'U1007',name:'刘医生',email:'lys@email.com',reg:'2024-02-14',posts:1,status:'normal'},
-  {id:'U1008',name:'周搬家',email:'zbj@email.com',reg:'2024-03-10',posts:2,status:'normal'},
 ];
 
 let REVIEWS = [
-  {id:1,user:'李**',uid:'U0101',company:'ABC 移民顾问',score:5,text:'服务非常专业，签证顺利获批',status:'visible'},
-  {id:2,user:'张**',uid:'U0102',company:'奥克兰房产专家',score:5,text:'帮我找到了满意的房子',status:'visible'},
-  {id:3,user:'王**',uid:'U0103',company:'XYZ 留学机构',score:4,text:'留学申请全程有人跟进，顺利拿到offer',status:'visible'},
-  {id:4,user:'匿名',uid:'U0104',company:'伦敦金融服务',score:2,text:'服务态度一般，有点失望',status:'hidden'},
-  {id:5,user:'陈**',uid:'U0105',company:'新加坡移民中心',score:5,text:'非常专业，一次通过，强烈推荐',status:'visible'},
-  {id:6,user:'黄**',uid:'U0106',company:'ABC 移民顾问',score:5,text:'全程中文，专业负责',status:'visible'},
+  {id:1,user:'李**',uid:'U0101',company:'奥克兰移民顾问 AMC',score:5,text:'顾问非常耐心，签证一次性通过，全程中文无障碍，强烈推荐！',status:'visible'},
+  {id:2,user:'张**',uid:'U0102',company:'奥克兰优选地产',score:5,text:'帮我找到了满意的房子，North Shore区的房子选得非常准确',status:'visible'},
+  {id:3,user:'王**',uid:'U0103',company:'新语言留学中心',score:4,text:'留学申请全程有人跟进，顺利拿到offer，服务很专业',status:'visible'},
+  {id:4,user:'陈**',uid:'U0104',company:'新加坡移民咨询 SIA',score:5,text:'非常专业，EP申请一次通过，全程中文服务，强烈推荐',status:'visible'},
+  {id:5,user:'黄**',uid:'U0105',company:'太平洋律师事务所',score:5,text:'律师非常专业，解释清晰，移民法律文件处理很顺畅',status:'visible'},
+  {id:6,user:'林**',uid:'U0106',company:'悉尼移民中心 SIC',score:5,text:'MARA顾问经验丰富，澳洲PR顺利获批，非常感谢',status:'visible'},
+  {id:7,user:'刘**',uid:'U0107',company:'多伦多移民中心 TIC',score:5,text:'Express Entry顺利入池，RCIC顾问全程跟进，超级专业',status:'visible'},
+  {id:8,user:'赵**',uid:'U0108',company:'GTA华人置业',score:5,text:'Markham的房子买得非常满意，中文服务一流',status:'visible'},
+  {id:9,user:'吴**',uid:'U0109',company:'硅谷移民律所',score:5,text:'H-1B和绿卡手续都很顺利，律所非常专业靠谱',status:'visible'},
+  {id:10,user:'孙**',uid:'U0110',company:'伦敦移民顾问 LIC',score:4,text:'全球人才签证申请顺利，顾问沟通及时，服务不错',status:'visible'},
+  {id:11,user:'周**',uid:'U0111',company:'狮城置业顾问',score:5,text:'新加坡私宅买得很顺利，外籍买家流程全程有人带，非常放心',status:'visible'},
+  {id:12,user:'钱**',uid:'U0112',company:'华康全科诊所',score:5,text:'中文诊疗非常方便，GP很耐心，在奥克兰终于找到靠谱华人诊所',status:'visible'},
 ];
 
-let RISK_LIST = [
-  {id:'R1',company:'伦敦金融服务',region:'UK-LON',tags:['complaints','docs_abnormal'],added:'2024-03-20'},
-  {id:'R2',company:'悉尼搬家专家',region:'AU-SYD',tags:['docs_abnormal'],added:'2024-03-22'},
-];
+let RISK_LIST = [];
+
+// ── Boot: pre-load ALL regional data into SERVICES ───────────
+function initServices() {
+  let id = 1;
+  Object.entries(REGIONAL_SEED).forEach(([region, seeds]) => {
+    seeds.forEach(s => {
+      SERVICES.push({
+        ...s,
+        id: id++,
+        region,
+        time: '09:00',
+        status: 'approved',
+        lawyerStatus: s.docs?.length >= 3 ? 'passed' : 'none',
+        risk: [],
+      });
+    });
+  });
+}
 
 /* ============================================================
    STATE
@@ -1757,6 +1749,17 @@ function applyLang() {
   if (admLoggedIn) renderAdmPanel(curAdmPanel);
 }
 
+let searchQuery = '';
+
+function doSearch(q) {
+  searchQuery = (q || '').trim();
+  curCat = 'all';
+  openList('all');
+  // highlight the search in title
+  const title = document.getElementById('list-title');
+  if (title && searchQuery) title.textContent = '🔍 "' + searchQuery + '"';
+}
+
 function openList(cat) {
   if (cat !== undefined) curCat = cat;
   renderList();
@@ -1774,20 +1777,35 @@ function renderList() {
 
   // Title
   const title = document.getElementById('list-title');
-  if (title) title.textContent = (curCat === 'all' ? T('see_all') : catNames[curCat] || curCat) + ' — ' + regLabel(curRegion);
+  if (title && !searchQuery) {
+    title.textContent = (curCat === 'all' ? (T('f_all')||'全部服务商') : catNames[curCat]||curCat)
+      + '  ·  ' + regLabel(curRegion);
+  }
 
   // Filter chips
   const fc = document.getElementById('list-filter-chips');
   if (fc) {
-    const allLabel = T('f_all') || '全部';
-    fc.innerHTML = `<button class="ftb${curCat==='all'?' on':''}" onclick="curCat='all';renderList()">${allLabel}</button>` +
-      CAT_CODES.map((code,i) => `<button class="ftb${curCat===code?' on':''}" onclick="curCat='${code}';renderList()">${catNames[code]}</button>`).join('');
+    fc.innerHTML = `<button class="ftb${curCat==='all'?' on':''}" onclick="searchQuery='';curCat='all';renderList()">${T('f_all')||'全部'}</button>` +
+      CAT_CODES.map((code,i) =>
+        `<button class="ftb${curCat===code?' on':''}" onclick="searchQuery='';curCat='${code}';renderList()">${catNames[code]}</button>`
+      ).join('');
   }
 
-  // Cards — region first, then all approved
+  // Base: all approved
   let filtered = SERVICES.filter(s => s.status === 'approved');
+
+  // Category filter
   if (curCat !== 'all') filtered = filtered.filter(s => s.cat === curCat);
-  // Sort: same region first, then by rating
+
+  // Search filter
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = SERVICES.filter(s => s.status === 'approved' &&
+      (s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q) ||
+       regLabel(s.region).toLowerCase().includes(q)));
+  }
+
+  // Sort: same region first, then by rating desc
   filtered.sort((a, b) => {
     if (a.region === curRegion && b.region !== curRegion) return -1;
     if (b.region === curRegion && a.region !== curRegion) return 1;
@@ -1796,25 +1814,37 @@ function renderList() {
 
   const grid = document.getElementById('list-grid');
   if (!grid) return;
+
+  // Stats bar
+  const total = filtered.length;
+  const regional = filtered.filter(s => s.region === curRegion).length;
+  const statsBar = `<div style="grid-column:1/-1;font-size:13px;font-weight:600;color:var(--t4);margin-bottom:4px">
+    ${T('f_all')||'共'} <strong style="color:var(--t1)">${total}</strong> 个服务商
+    ${regional ? `· <span style="color:var(--blue)">${regLabel(curRegion)}</span> ${regional} 个` : ''}
+  </div>`;
+
   if (!filtered.length) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:52px 0;color:var(--t4)">
       <div style="font-size:36px;margin-bottom:12px">🔍</div>
-      <div style="font-size:15px;font-weight:700">${T('no_data')}</div>
+      <div style="font-size:15px;font-weight:700">${T('no_data')||'暂无数据'}</div>
       <button onclick="openDemoPicker()" style="margin-top:16px;padding:9px 20px;border-radius:10px;
         border:2px solid var(--blue);color:var(--blue);background:none;font-size:13px;font-weight:700;
         cursor:pointer;font-family:inherit">🗺️ 换个城市试试</button>
     </div>`;
     return;
   }
-  grid.innerHTML = filtered.map(s => `
+
+  grid.innerHTML = statsBar + filtered.map(s => `
     <div class="card" onclick="openDetail(${s.id})">
       <div class="card-glow"></div>
       ${s.docs?.length >= 2 ? `<div class="cert">✓ ${certBadge}</div>` : ''}
       <div class="c-name">${s.name}</div>
-      <div style="font-size:11px;color:var(--blue);font-weight:600;margin-bottom:6px">${regLabel(s.region)}</div>
+      <div style="font-size:11px;color:var(--blue);font-weight:600;margin-bottom:6px">
+        ${s.region === curRegion ? '📍' : '🌐'} ${regLabel(s.region)}
+      </div>
       <div class="c-desc">${s.desc}</div>
       <div class="c-foot">
-        <div class="c-rat"><span class="stars">★★★★★</span> ${s.rating} <span class="c-cnt">(${s.reviews})</span></div>
+        <div class="c-rat"><span class="stars">★</span> ${s.rating} <span class="c-cnt">(${s.reviews})</span></div>
         <span class="c-cat">${catNames[s.cat] || s.cat}</span>
       </div>
     </div>`).join('');
@@ -1906,19 +1936,19 @@ function renderCards() {
   // Filter: approved + match region + match category
   let filtered = SERVICES.filter(s => s.status === 'approved');
 
-  // Region filter — show current region first, then others
-  const regional = filtered.filter(s => s.region === curRegion);
-  const others   = filtered.filter(s => s.region !== curRegion);
-  filtered = [...regional, ...others];
-
-  // Category filter
+  // Category filter first
   if (curCat !== 'all') {
     filtered = filtered.filter(s => s.cat === curCat);
-  } else {
-    // In "all" mode, prefer featured
-    const featured = filtered.filter(s => s.featured);
-    filtered = featured.length >= 3 ? featured : filtered;
   }
+
+  // Sort: current region first, then featured, then by rating
+  filtered.sort((a, b) => {
+    const aLocal = a.region === curRegion ? 1 : 0;
+    const bLocal = b.region === curRegion ? 1 : 0;
+    if (aLocal !== bLocal) return bLocal - aLocal;
+    if (a.featured !== b.featured) return b.featured ? 1 : -1;
+    return b.rating - a.rating;
+  });
 
   if (!filtered.length) {
     // Show empty state with suggestion to try another city
@@ -2696,6 +2726,7 @@ function renderSettings() {
    BOOT
 ============================================================ */
 window.addEventListener('DOMContentLoaded', ()=>{
+  initServices();   // pre-load all regional data
   applyLang();
 });
 </script>
@@ -3011,24 +3042,11 @@ async function detectLocation() {
   );
 }
 
-/* ── Import regional seed data ───────── */
+/* ── Import regional seed data (data already in SERVICES, just switch region) ── */
 async function importRegionalData(code) {
-  const seeds = REGIONAL_SEED[code];
-  if (!seeds || !seeds.length) return;
-  // Remove previous seeded entries
-  SERVICES = SERVICES.filter(s => !String(s.uid).startsWith('S') || parseInt(String(s.uid).slice(1)) < 1000);
-  const timeStr = new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
-  for (let i = 0; i < seeds.length; i++) {
-    await new Promise(r => setTimeout(r, 60));
-    if (!SERVICES.find(x => x.uid === seeds[i].uid)) {
-      SERVICES.push({...seeds[i], id: 900+i, region: code, time: timeStr,
-        status:'approved', lawyerStatus:'none', risk:[]});
-    }
-    showToast(`📋 导入 ${i+1}/${seeds.length}：${seeds[i].name}`,
-      20 + Math.round((i+1)/seeds.length*75), false);
-  }
-  const badge = document.getElementById('badge-svc');
-  if (badge) badge.textContent = SERVICES.filter(s=>s.status==='pending').length;
+  // Data is pre-loaded at boot — just ensure region is set and animate briefly
+  await new Promise(r => setTimeout(r, 300));
+  showToast(`✅ 数据加载完成`, 100, true);
 }
 </script>
 </body>
