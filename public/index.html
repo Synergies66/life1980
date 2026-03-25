@@ -10,7 +10,7 @@
 :root{
   --bg:#f2f3f5;--surf:#fff;--surf2:#f7f8fa;
   --t1:#0a0a0a;--t2:#222;--t3:#444;--t4:#777;
-  --blue:#0052cc;--blue2:#003d99;--blue3:#e8f0fe;
+  --blue:#2b7fff;--blue2:#1a6ef5;--blue3:#dbeafe;--blue4:#bfdbfe;
   --green:#15692a;--green2:#e4f4ea;
   --red:#b91c1c;--red2:#fef2f2;
   --orange:#b45309;--orange2:#fffbeb;
@@ -61,9 +61,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;
 .btn-out{font-size:12px;font-weight:700;color:var(--blue);padding:6px 14px;
   border-radius:8px;border:2px solid var(--blue);background:none;cursor:pointer;transition:var(--tr);white-space:nowrap}
 .btn-out:hover{background:var(--blue3)}
-.btn-fill{font-size:12px;font-weight:700;color:#fff;padding:6px 14px;
-  border-radius:8px;border:none;background:var(--blue);cursor:pointer;transition:var(--tr);white-space:nowrap}
-.btn-fill:hover{background:var(--blue2);box-shadow:0 3px 10px rgba(0,82,204,.3)}
+.btn-fill{font-size:12px;font-weight:700;color:var(--blue);padding:6px 14px;
+  border-radius:8px;border:2px solid var(--blue);background:var(--blue3);cursor:pointer;transition:var(--tr);white-space:nowrap}
+.btn-fill:hover{background:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(59,130,246,.2)}
 
 /*===== PAGES =====*/
 .page{display:none;padding-top:54px;min-height:100vh;animation:fu .35s cubic-bezier(.4,0,.2,1) both}
@@ -73,10 +73,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;
 /*===== HERO =====*/
 .hero{background:var(--surf);padding:52px 24px 44px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 800px 400px at 50% -60px,rgba(0,82,204,.06) 0%,transparent 70%)}
+  background:radial-gradient(ellipse 800px 400px at 50% -60px,rgba(59,130,246,.06) 0%,transparent 70%)}
 .reg-pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
   color:var(--blue);background:var(--blue3);padding:6px 14px;border-radius:20px;
-  margin-bottom:24px;border:1px solid rgba(0,82,204,.15)}
+  margin-bottom:24px;border:1px solid rgba(59,130,246,.15)}
 .hero-sub{font-size:clamp(15px,2.2vw,20px);font-weight:600;color:var(--t2);line-height:1.75;
   max-width:500px;margin:0 auto 36px}
 
@@ -90,7 +90,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;
 .srch-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:17px;pointer-events:none}
 .srch-btn{position:absolute;right:7px;top:50%;transform:translateY(-50%);
   background:var(--blue);color:#fff;border:none;padding:9px 20px;
-  border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:var(--tr)}
+  border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:var(--tr);letter-spacing:.3px}
 .srch-btn:hover{background:var(--blue2)}
 .hot-row{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .ht-lbl{font-size:12px;font-weight:700;color:var(--t4)}
@@ -105,8 +105,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;
 .chip{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:50px;
   background:var(--bg);border:2px solid var(--bdr);cursor:pointer;transition:var(--tr);
   font-size:13px;font-weight:700;color:var(--t2)}
-.chip:hover,.chip.on{background:var(--blue);color:#fff;border-color:var(--blue);
-  box-shadow:0 4px 12px rgba(0,82,204,.25);transform:translateY(-2px)}
+.chip:hover,.chip.on{background:var(--blue3);color:#1e40af;border-color:var(--blue);
+  box-shadow:0 2px 8px rgba(43,127,255,.15);transform:translateY(-2px)}
 .chip .ci{font-size:16px}
 
 /*===== SECTION =====*/
@@ -137,27 +137,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;
 
 /*===== LEADERBOARD =====*/
 .lb-wrap{padding:0 24px 44px;max-width:1100px;margin:0 auto}
-.lb{background:linear-gradient(135deg,#003d99 0%,#002470 50%,#001440 100%);
+.lb{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 50%,#93c5fd 100%);
   border-radius:var(--r4);padding:32px;color:#fff}
 .lb-top{display:flex;align-items:flex-start;justify-content:space-between;
   margin-bottom:24px;gap:14px;flex-wrap:wrap}
-.lb-ht{font-size:19px;font-weight:900;letter-spacing:-.3px}
-.lb-hs{font-size:12px;font-weight:400;opacity:.6;margin-top:3px}
+.lb-ht{font-size:19px;font-weight:900;letter-spacing:-.3px;color:#1e3a8a}
+.lb-hs{font-size:12px;font-weight:400;color:#3b82f6;margin-top:3px}
 .live-badge{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;
-  background:rgba(255,255,255,.12);padding:6px 13px;border-radius:20px}
+  background:rgba(37,99,235,.12);color:#1e40af;padding:6px 13px;border-radius:20px}
 .ldot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:blink 1.4s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
 .lb-list{display:flex;flex-direction:column;gap:9px}
 .lb-row{display:flex;align-items:center;gap:13px;
-  background:rgba(255,255,255,.09);border-radius:12px;padding:13px 16px;
+  background:rgba(255,255,255,.7);border-radius:12px;padding:13px 16px;
   cursor:pointer;transition:var(--tr)}
-.lb-row:hover{background:rgba(255,255,255,.16)}
-.lb-n{font-size:18px;font-weight:900;opacity:.4;width:26px;text-align:center}
-.lb-n.g1{opacity:1;color:#ffd700}.lb-n.g2{opacity:1;color:#d4d4d8}.lb-n.g3{opacity:1;color:#d97706}
-.lb-info{flex:1}.lb-nm{font-size:14px;font-weight:800}
-.lb-ty{font-size:11px;opacity:.5;margin-top:2px}
-.lb-pt{font-size:15px;font-weight:900}
-.lb-st{font-size:11px;color:#fcd34d}
+.lb-row:hover{background:#fff;box-shadow:var(--sh1)}
+.lb-n{font-size:18px;font-weight:900;color:#93c5fd;width:26px;text-align:center}
+.lb-n.g1{color:#f59e0b}.lb-n.g2{color:#6b7280}.lb-n.g3{color:#d97706}
+.lb-info{flex:1}.lb-nm{font-size:14px;font-weight:800;color:#1e3a8a}
+.lb-ty{font-size:11px;color:#3b82f6;margin-top:2px}
+.lb-pt{font-size:15px;font-weight:900;color:#1e3a8a}
+.lb-st{font-size:11px;color:#f59e0b}
 
 /*===== REVIEWS =====*/
 .rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
@@ -179,7 +179,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;
 .cta-tile{padding:28px 20px;border-radius:var(--r3);text-align:center;
   cursor:pointer;transition:var(--tr)}
 .cta-tile:hover{transform:translateY(-3px)}
-.cta-tile.bl{background:var(--blue);color:#fff}
+.cta-tile.bl{background:var(--blue3);color:var(--blue);border:2px solid var(--blue)}
 .cta-tile.lt{background:var(--bg);border:2px solid var(--bdr)}
 .ct-ic{font-size:28px;margin-bottom:10px}
 .ct-t{font-size:14px;font-weight:900;margin-bottom:5px}
@@ -195,13 +195,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;
 .ft-cats{font-size:13px;font-weight:400;color:#4a7ab5;line-height:1.8}
 .ft-contact{display:flex;flex-direction:column;gap:12px;align-items:flex-end}
 .ft-contact-item{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500;color:#2d5a8e;transition:var(--tr);cursor:pointer;text-decoration:none}
-.ft-contact-item:hover{color:#0052cc}
-.ft-contact-ic{width:32px;height:32px;border-radius:50%;background:rgba(0,82,204,.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.ft-divider{max-width:1100px;margin:40px auto 0;height:1px;background:rgba(0,82,204,.15)}
+.ft-contact-item:hover{color:#3b82f6}
+.ft-contact-ic{width:32px;height:32px;border-radius:50%;background:rgba(59,130,246,.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ft-divider{max-width:1100px;margin:40px auto 0;height:1px;background:rgba(59,130,246,.15)}
 .ft-bottom{max-width:1100px;margin:0 auto;padding:18px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .ft-copy{font-size:12px;font-weight:500;color:#4a7ab5}
-.ft-admin-link{font-size:12px;font-weight:700;color:#2d5a8e;cursor:pointer;transition:var(--tr);padding:6px 14px;border-radius:7px;border:1.5px solid rgba(0,82,204,.3)}
-.ft-admin-link:hover{color:#0052cc;border-color:#0052cc;background:rgba(0,82,204,.08)}
+.ft-admin-link{font-size:12px;font-weight:700;color:#2d5a8e;cursor:pointer;transition:var(--tr);padding:6px 14px;border-radius:7px;border:1.5px solid rgba(59,130,246,.3)}
+.ft-admin-link:hover{color:#3b82f6;border-color:#3b82f6;background:rgba(59,130,246,.08)}
 
 /*===== MODAL =====*/
 .overlay{display:none;position:fixed;inset:0;z-index:600;
@@ -237,9 +237,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.55}
 select.fi{-webkit-appearance:none;appearance:none;cursor:pointer;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24'%3E%3Cpath fill='%23505050' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
-.bfull{width:100%;padding:12px;border-radius:11px;border:none;font-size:14px;
-  font-weight:800;color:#fff;background:var(--blue);cursor:pointer;transition:var(--tr)}
-.bfull:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,82,204,.3)}
+.bfull{width:100%;padding:12px;border-radius:11px;border:2px solid var(--blue);font-size:14px;
+  font-weight:800;color:var(--blue);background:var(--blue3);cursor:pointer;transition:var(--tr)}
+.bfull:hover{background:var(--blue);color:#fff;transform:translateY(-1px);box-shadow:0 4px 14px rgba(59,130,246,.2)}
 .bfull.ok{background:var(--green)}
 .div-or{display:flex;align-items:center;gap:10px;margin:14px 0;
   font-size:11px;font-weight:700;color:var(--t4)}
@@ -263,9 +263,9 @@ select.fi{-webkit-appearance:none;appearance:none;cursor:pointer;
 .dst{font-size:17px;color:#f59e0b}
 .drc{font-size:12px;font-weight:500;color:var(--t4)}
 .dacts{display:flex;gap:10px;flex-wrap:wrap}
-.bblue{padding:12px 24px;border-radius:11px;border:none;font-size:14px;font-weight:800;
-  color:#fff;background:var(--blue);cursor:pointer;transition:var(--tr);font-family:inherit}
-.bblue:hover{background:var(--blue2);box-shadow:0 5px 16px rgba(0,82,204,.28);transform:translateY(-1px)}
+.bblue{padding:12px 24px;border-radius:11px;border:2px solid var(--blue);font-size:14px;font-weight:800;
+  color:var(--blue);background:var(--blue3);cursor:pointer;transition:var(--tr);font-family:inherit}
+.bblue:hover{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(59,130,246,.2);transform:translateY(-1px)}
 .boutl{padding:12px 24px;border-radius:11px;font-size:14px;font-weight:800;color:var(--t1);
   background:none;border:2px solid var(--bdr);cursor:pointer;transition:var(--tr);font-family:inherit}
 .boutl:hover{border-color:var(--blue);color:var(--blue)}
@@ -318,7 +318,7 @@ select.fi{-webkit-appearance:none;appearance:none;cursor:pointer;
 .doc-list{display:flex;flex-direction:column;gap:9px}
 .doc-item{display:flex;align-items:flex-start;gap:11px;padding:11px 13px;
   background:#fff;border-radius:9px;border:1px solid rgba(124,92,0,.12);cursor:pointer;transition:var(--tr)}
-.doc-item:hover{border-color:rgba(0,82,204,.3)}
+.doc-item:hover{border-color:rgba(59,130,246,.3)}
 .doc-item input[type=checkbox]{width:16px;height:16px;margin-top:2px;
   accent-color:var(--blue);cursor:pointer;flex-shrink:0}
 .doc-nm{font-size:13px;font-weight:800;color:var(--t1)}
@@ -341,7 +341,7 @@ select.fi{-webkit-appearance:none;appearance:none;cursor:pointer;
   cursor:pointer;transition:var(--tr);border-radius:0;font-size:13px;font-weight:600;color:var(--t3);
   border-left:3px solid transparent;margin:1px 0}
 .sb-item:hover{background:var(--surf2);color:var(--t1)}
-.sb-item.on{background:var(--blue3);color:var(--blue);border-left-color:var(--blue);font-weight:800}
+.sb-item.on{background:var(--blue3);color:#1e40af;border-left-color:var(--blue);font-weight:800}
 .sb-item .si{font-size:16px;width:22px;text-align:center;flex-shrink:0}
 .sb-badge{margin-left:auto;background:var(--orange);color:#fff;
   font-size:10px;font-weight:800;padding:1px 7px;border-radius:10px;min-width:20px;text-align:center}
@@ -367,7 +367,7 @@ select.fi{-webkit-appearance:none;appearance:none;cursor:pointer;
   font-size:13px;font-weight:700;color:var(--t3);cursor:pointer;transition:var(--tr);font-family:inherit}
 .loc-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue3)}
 .loc-btn.loading{opacity:.6;pointer-events:none}
-.loc-btn.done{border-color:var(--green);color:var(--green);background:var(--green2)}
+.loc-btn.done{border-color:#059669;color:#059669;background:#d1fae5}
 
 /*===== IMPORT TOAST =====*/
 .import-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
@@ -385,7 +385,7 @@ select.fi{-webkit-appearance:none;appearance:none;cursor:pointer;
 .tbl-filters{display:flex;gap:6px;flex-wrap:wrap}
 .ftb{padding:6px 14px;border-radius:16px;font-size:12px;font-weight:700;
   border:1.5px solid var(--bdr);background:none;color:var(--t3);cursor:pointer;transition:var(--tr);font-family:inherit}
-.ftb.on,.ftb:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.ftb.on,.ftb:hover{background:var(--blue3);color:var(--blue);border-color:var(--blue)}
 .srch-tbl{padding:7px 11px;border:1.5px solid var(--bdr);border-radius:8px;
   font-size:13px;outline:none;width:180px;transition:var(--tr)}
 .srch-tbl:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue3)}
@@ -410,7 +410,7 @@ tr:hover td{background:var(--surf2)}
   background:none;color:var(--t2);font-family:inherit}
 .btn-sm:hover{border-color:var(--blue);color:var(--blue)}
 .btn-sm.bl{border-color:var(--blue);color:var(--blue)}
-.btn-sm.bl:hover{background:var(--blue);color:#fff}
+.btn-sm.bl:hover{background:var(--blue3);color:var(--blue2)}
 .btn-sm.rd{border-color:var(--red);color:var(--red)}
 .btn-sm.rd:hover{background:var(--red);color:#fff}
 .btn-sm.gr{border-color:var(--green);color:var(--green)}
@@ -469,10 +469,10 @@ tr:hover td{background:var(--surf2)}
 .s-add:hover{border-color:var(--blue);color:var(--blue)}
 .toggle{width:36px;height:20px;border-radius:10px;background:var(--bdr);
   border:none;cursor:pointer;position:relative;transition:var(--tr);flex-shrink:0}
-.toggle.on{background:var(--blue)}
+.toggle.on{background:var(--blue3);border:2px solid var(--blue)}
 .toggle::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;
   border-radius:50%;background:#fff;transition:var(--tr);box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.toggle.on::after{transform:translateX(16px)}
+.toggle.on::after{transform:translateX(14px);background:var(--blue)}
 
 /*===== RESPONSIVE =====*/
 @media(max-width:800px){
@@ -557,9 +557,11 @@ tr:hover td{background:var(--surf2)}
 <div class="page act" id="page-home">
   <div class="hero">
     <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px;flex-wrap:wrap">
-      <div class="reg-pill" id="regPill">📍 新西兰·奥克兰</div>
       <button class="loc-btn" id="loc-btn" onclick="detectLocation()">
-        <span id="loc-ico">🎯</span> <span id="loc-txt" data-i18n="loc_detect">自动定位</span>
+        <span id="loc-ico">🎯</span> <span id="loc-txt">自动定位</span>
+      </button>
+      <button class="loc-btn" onclick="openDemoPicker()" style="background:var(--blue3);border-color:var(--blue);color:var(--blue)">
+        🗺️ 选城市测试
       </button>
     </div>
     <p class="hero-sub" id="h-sub" data-i18n-html="hero_sub">移民、留学、房产、律师——<br>所有生活服务，一处全搞定</p>
@@ -577,7 +579,7 @@ tr:hover td{background:var(--surf2)}
   <div class="sec">
     <div class="sec-hd">
       <h2 class="sec-t" data-i18n="sec_feat">🔥 精选推荐</h2>
-      <a class="sec-m" data-i18n="see_all">查看全部 →</a>
+      <a class="sec-m" data-i18n="see_all" style="cursor:pointer" onclick="openList('all')">查看全部 →</a>
     </div>
     <div class="cgrid" id="cards-grid"></div>
   </div>
@@ -711,6 +713,18 @@ tr:hover td{background:var(--surf2)}
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: LIST (全部服务商) ===== -->
+<div class="page" id="page-list">
+  <div style="max-width:1100px;margin:0 auto;padding:32px 24px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;flex-wrap:wrap">
+      <button class="bk" onclick="goPage('home')">← <span data-i18n="d_back">返回首页</span></button>
+      <h2 id="list-title" style="font-size:20px;font-weight:900;letter-spacing:-.4px"></h2>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px" id="list-filter-chips"></div>
+    <div class="cgrid" id="list-grid"></div>
   </div>
 </div>
 
@@ -1725,9 +1739,11 @@ function applyLang() {
   if (pnm) pnm.placeholder = T('pub_nm_ph');
   const pd = document.getElementById('pub-desc');
   if (pd) pd.placeholder = T('pub_desc_ph');
-  // Region pill — re-translate current region name
-  const pill = document.getElementById('regPill');
-  if (pill) pill.textContent = '📍 ' + regLabel(curRegion);
+  // Update loc-btn text with current region
+  const ltxt = document.getElementById('loc-txt');
+  if (ltxt && ltxt.textContent !== '自动定位' && ltxt.getAttribute('data-i18n') !== 'loc_detect') {
+    // keep whatever city name is showing
+  }
   // Re-render dynamic sections
   renderHotTags();
   renderCats();
@@ -1741,41 +1757,184 @@ function applyLang() {
   if (admLoggedIn) renderAdmPanel(curAdmPanel);
 }
 
-/* ============================================================
-   HOME RENDERS
-============================================================ */
+function openList(cat) {
+  if (cat !== undefined) curCat = cat;
+  renderList();
+  goPage('list');
+}
+
+function renderList() {
+  const certBadge = T('cert_badge') || 'K1980';
+  const catNames = {
+    imm:T('cats')?.[0]?.t||'移民签证', law:T('cats')?.[1]?.t||'律师法务',
+    prop:T('cats')?.[2]?.t||'房产置业', edu:T('cats')?.[3]?.t||'留学教育',
+    jobs:T('cats')?.[4]?.t||'招聘工作', fin:T('cats')?.[5]?.t||'金融理财',
+    med:T('cats')?.[6]?.t||'医疗健康', move:T('cats')?.[7]?.t||'搬家物流',
+  };
+
+  // Title
+  const title = document.getElementById('list-title');
+  if (title) title.textContent = (curCat === 'all' ? T('see_all') : catNames[curCat] || curCat) + ' — ' + regLabel(curRegion);
+
+  // Filter chips
+  const fc = document.getElementById('list-filter-chips');
+  if (fc) {
+    const allLabel = T('f_all') || '全部';
+    fc.innerHTML = `<button class="ftb${curCat==='all'?' on':''}" onclick="curCat='all';renderList()">${allLabel}</button>` +
+      CAT_CODES.map((code,i) => `<button class="ftb${curCat===code?' on':''}" onclick="curCat='${code}';renderList()">${catNames[code]}</button>`).join('');
+  }
+
+  // Cards — region first, then all approved
+  let filtered = SERVICES.filter(s => s.status === 'approved');
+  if (curCat !== 'all') filtered = filtered.filter(s => s.cat === curCat);
+  // Sort: same region first, then by rating
+  filtered.sort((a, b) => {
+    if (a.region === curRegion && b.region !== curRegion) return -1;
+    if (b.region === curRegion && a.region !== curRegion) return 1;
+    return b.rating - a.rating;
+  });
+
+  const grid = document.getElementById('list-grid');
+  if (!grid) return;
+  if (!filtered.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:52px 0;color:var(--t4)">
+      <div style="font-size:36px;margin-bottom:12px">🔍</div>
+      <div style="font-size:15px;font-weight:700">${T('no_data')}</div>
+      <button onclick="openDemoPicker()" style="margin-top:16px;padding:9px 20px;border-radius:10px;
+        border:2px solid var(--blue);color:var(--blue);background:none;font-size:13px;font-weight:700;
+        cursor:pointer;font-family:inherit">🗺️ 换个城市试试</button>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(s => `
+    <div class="card" onclick="openDetail(${s.id})">
+      <div class="card-glow"></div>
+      ${s.docs?.length >= 2 ? `<div class="cert">✓ ${certBadge}</div>` : ''}
+      <div class="c-name">${s.name}</div>
+      <div style="font-size:11px;color:var(--blue);font-weight:600;margin-bottom:6px">${regLabel(s.region)}</div>
+      <div class="c-desc">${s.desc}</div>
+      <div class="c-foot">
+        <div class="c-rat"><span class="stars">★★★★★</span> ${s.rating} <span class="c-cnt">(${s.reviews})</span></div>
+        <span class="c-cat">${catNames[s.cat] || s.cat}</span>
+      </div>
+    </div>`).join('');
+}
+// Hot-tag → cat code map (order matches hot_tags array in each language)
+const HOT_TAG_CATS = {
+  // zh-CN
+  '移民':['imm'],'留学':['edu'],'房产':['prop'],'律师':['law'],'工作签证':['imm','jobs'],
+  // zh-TW
+  '移民簽證':['imm'],'留學':['edu'],'房產':['prop'],'律師':['law'],'工作簽證':['imm','jobs'],
+  // en
+  'Immigration':['imm'],'Study Abroad':['edu'],'Property':['prop'],'Lawyers':['law'],'Work Visa':['imm','jobs'],
+  // ja
+  '不動産':['prop'],'弁護士':['law'],'就労ビザ':['imm','jobs'],
+  // ko
+  '이민':['imm'],'유학':['edu'],'부동산':['prop'],'변호사':['law'],'취업비자':['imm','jobs'],
+};
+function hotTagCat(tag) {
+  if (HOT_TAG_CATS[tag]) return HOT_TAG_CATS[tag][0];
+  const lower = tag.toLowerCase();
+  if (/immig|移民|移民/.test(lower)) return 'imm';
+  if (/study|edu|留学|留學/.test(lower)) return 'edu';
+  if (/prop|房产|房產|不動産|부동산/.test(lower)) return 'prop';
+  if (/law|律师|律師|弁護士|변호사/.test(lower)) return 'law';
+  if (/visa|签证|簽證|ビザ|비자/.test(lower)) return 'imm';
+  return 'all';
+}
+
 function renderHotTags() {
   const w = document.getElementById('hot-tags-wrap');
   if (!w) return;
   const tags = T('hot_tags') || [];
-  w.innerHTML = tags.map(t => `<span class="ht">${t}</span>`).join('');
+  w.innerHTML = tags.map(t =>
+    `<span class="ht" style="cursor:pointer" onclick="hotTagClick('${t}')">${t}</span>`
+  ).join('');
 }
+function hotTagClick(tag) {
+  const cat = hotTagCat(tag);
+  curCat = cat;
+  openList(cat);
+}
+
+// Category key map: index → cat code
+const CAT_CODES = ['imm','law','prop','edu','jobs','fin','med','move'];
+let curCat = 'all';
 
 function renderCats() {
   const ci = document.getElementById('cat-inner');
   if (!ci) return;
   const cats = T('cats') || [];
-  ci.innerHTML = cats.map((c,i) =>
-    `<div class="chip${i===0?' on':''}" onclick="this.parentElement.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));this.classList.add('on')">
+  // "全部" chip first
+  const allLabel = T('f_all') || '全部';
+  const allChip = `<div class="chip${curCat==='all'?' on':''}" onclick="openList('all')" style="font-size:13px">
+    <span class="ci">🌐</span>${allLabel}</div>`;
+  const catChips = cats.map((c,i) =>
+    `<div class="chip${curCat===CAT_CODES[i]?' on':''}" onclick="openList('${CAT_CODES[i]}')">
       <span class="ci">${c.i}</span>${c.t}</div>`
   ).join('');
+  ci.innerHTML = allChip + catChips;
+}
+
+function setCat(cat) {
+  curCat = cat;
+  renderCats();
+  renderCards();
+  // On mobile or when invoked from hot tag, jump to list view
+  const inList = document.getElementById('page-list')?.classList.contains('act');
+  if (inList) { renderList(); return; }
+  // Smooth scroll to cards section
+  const sec = document.querySelector('.sec');
+  if (sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function renderCards() {
   const cg = document.getElementById('cards-grid');
   if (!cg) return;
-  const approved = SERVICES.filter(s => s.status === 'approved' && s.featured);
   const certBadge = T('cert_badge') || 'K1980';
   const catNames = {
     imm: T('cats')?.[0]?.t || 'Immigration',
     law: T('cats')?.[1]?.t || 'Legal',
     prop: T('cats')?.[2]?.t || 'Property',
     edu: T('cats')?.[3]?.t || 'Education',
+    jobs: T('cats')?.[4]?.t || 'Jobs',
     fin: T('cats')?.[5]?.t || 'Finance',
     med: T('cats')?.[6]?.t || 'Healthcare',
     move: T('cats')?.[7]?.t || 'Moving',
   };
-  cg.innerHTML = approved.map(s => `
+
+  // Filter: approved + match region + match category
+  let filtered = SERVICES.filter(s => s.status === 'approved');
+
+  // Region filter — show current region first, then others
+  const regional = filtered.filter(s => s.region === curRegion);
+  const others   = filtered.filter(s => s.region !== curRegion);
+  filtered = [...regional, ...others];
+
+  // Category filter
+  if (curCat !== 'all') {
+    filtered = filtered.filter(s => s.cat === curCat);
+  } else {
+    // In "all" mode, prefer featured
+    const featured = filtered.filter(s => s.featured);
+    filtered = featured.length >= 3 ? featured : filtered;
+  }
+
+  if (!filtered.length) {
+    // Show empty state with suggestion to try another city
+    const noData = T('no_data') || '暂无数据';
+    cg.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:44px 0;color:var(--t4)">
+      <div style="font-size:36px;margin-bottom:12px">🔍</div>
+      <div style="font-size:15px;font-weight:700">${regLabel(curRegion)} · ${catNames[curCat]||curCat}</div>
+      <div style="font-size:13px;margin-top:6px">${noData}</div>
+      <button onclick="openDemoPicker()" style="margin-top:16px;padding:9px 20px;border-radius:10px;
+        border:2px solid var(--blue);color:var(--blue);background:none;font-size:13px;font-weight:700;
+        cursor:pointer;font-family:inherit">🗺️ 换个城市试试</button>
+    </div>`;
+    return;
+  }
+
+  cg.innerHTML = filtered.slice(0, 9).map(s => `
     <div class="card" onclick="openDetail(${s.id})">
       <div class="card-glow"></div>
       <div class="cert">✓ ${certBadge}</div>
@@ -1791,14 +1950,16 @@ function renderCards() {
 function renderLB() {
   const ll = document.getElementById('lb-list');
   if (!ll) return;
-  const top = SERVICES.filter(s=>s.status==='approved').sort((a,b)=>b.rating-a.rating).slice(0,3);
+  const top = SERVICES.filter(s => s.status === 'approved').sort((a,b) => b.rating - a.rating).slice(0, 5);
   const catNames = {imm:T('cats')?.[0]?.t,law:T('cats')?.[1]?.t,prop:T('cats')?.[2]?.t,edu:T('cats')?.[3]?.t,fin:T('cats')?.[5]?.t,med:T('cats')?.[6]?.t,move:T('cats')?.[7]?.t};
   ll.innerHTML = top.map((s,i) => `
     <div class="lb-row" onclick="openDetail(${s.id})">
-      <div class="lb-n ${['g1','g2','g3'][i]}">${i+1}</div>
-      <div class="lb-info"><div class="lb-nm">${s.name}</div>
-        <div class="lb-ty">${catNames[s.cat]||s.cat} · ${regLabel(s.region)}</div></div>
-      <div><div class="lb-pt">${s.rating}</div><div class="lb-st">★★★★★</div></div>
+      <div class="lb-n ${['g1','g2','g3','',''][i]}">${i+1}</div>
+      <div class="lb-info">
+        <div class="lb-nm">${s.name}</div>
+        <div class="lb-ty">${catNames[s.cat]||s.cat} · ${regLabel(s.region)}</div>
+      </div>
+      <div style="text-align:right"><div class="lb-pt">${s.rating}</div><div class="lb-st">${'★'.repeat(Math.round(s.rating))}</div></div>
     </div>`).join('');
 }
 
@@ -1806,7 +1967,7 @@ function renderRevGrid() {
   const rg = document.getElementById('rev-grid');
   if (!rg) return;
   const visible = REVIEWS.filter(r=>r.status==='visible').slice(0,4);
-  const colors=['linear-gradient(135deg,#0052cc,#5ac8fa)','linear-gradient(135deg,#059669,#34d399)','linear-gradient(135deg,#7c3aed,#a78bfa)','linear-gradient(135deg,#dc2626,#f87171)'];
+  const colors=['linear-gradient(135deg,#3b82f6,#5ac8fa)','linear-gradient(135deg,#059669,#34d399)','linear-gradient(135deg,#7c3aed,#a78bfa)','linear-gradient(135deg,#dc2626,#f87171)'];
   rg.innerHTML = visible.map((r,i)=>`
     <div class="rcard">
       <div class="rst">${'★'.repeat(r.score)}${'☆'.repeat(5-r.score)}</div>
@@ -1854,7 +2015,7 @@ function renderDetReviews() {
   if (!dr) return;
   dr.innerHTML = [
     {txt: curLang==='en'?'Very patient advisor — visa approved first try. Highly recommended.':'顾问非常耐心，签证一次性通过，全程中文无障碍',
-     av:'陈', color:'linear-gradient(135deg,#0052cc,#5ac8fa)', name:'陈女士', sub: T('d_yrs')},
+     av:'陈', color:'linear-gradient(135deg,#3b82f6,#5ac8fa)', name:'陈女士', sub: T('d_yrs')},
     {txt: curLang==='en'?'Professional guidance from start to finish.':'第一次申请，全靠团队手把手指导，超专业',
      av:'黄', color:'linear-gradient(135deg,#ff6b35,#ffd700)', name:'黄先生', sub: T('d_cases')},
   ].map((r,i)=>`
@@ -1872,12 +2033,103 @@ function renderDetReviews() {
    DETAIL PAGE
 ============================================================ */
 function openDetail(id) {
-  const s = SERVICES.find(x=>x.id===id);
-  if (!s) { goPage('detail'); return; }
-  document.querySelector('.d-name').textContent = s.name;
-  document.querySelector('.dbig').textContent = s.rating;
-  document.querySelector('.drc').innerHTML = `${s.reviews} <span>${T('d_revs')}</span>`;
-  applyLang();
+  const s = SERVICES.find(x => x.id === id);
+  if (!s) return;
+
+  const catNames = {
+    imm: T('cats')?.[0]?.t || '移民签证',
+    law: T('cats')?.[1]?.t || '律师法务',
+    prop: T('cats')?.[2]?.t || '房产置业',
+    edu: T('cats')?.[3]?.t || '留学教育',
+    jobs: T('cats')?.[4]?.t || '招聘工作',
+    fin: T('cats')?.[5]?.t || '金融理财',
+    med: T('cats')?.[6]?.t || '医疗健康',
+    move: T('cats')?.[7]?.t || '搬家物流',
+  };
+  const docLabels = {
+    biz: T('doc_biz') || '营业执照',
+    law: T('doc_law') || '律师执照',
+    imm: T('doc_imm') || '移民执照',
+    re:  T('doc_re')  || '地产执照',
+    id:  T('doc_id')  || '政府身份证件',
+    ref: T('doc_ref') || '客户推荐信',
+    assoc: T('doc_assoc') || '行业协会会员证',
+  };
+
+  // ── Header ──────────────────────────────────────────────
+  document.getElementById('det-name').textContent = s.name;
+  document.querySelector('.dbig').textContent = s.rating || '—';
+  // Star fill based on rating
+  const stars = Math.round(s.rating || 5);
+  document.querySelector('.dst').textContent = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+  document.querySelector('.drc').innerHTML = `${s.reviews || 0} <span>${T('d_revs')}</span>`;
+
+  // Badges
+  const hasCert = s.docs && s.docs.length >= 2;
+  document.querySelector('.dbg.bl').innerHTML = `✓ K1980 <span>${hasCert ? T('d_cert') : '待认证'}</span>`;
+  document.querySelector('.dbg.gr').innerHTML = `🏢 <span>${regLabel(s.region)}</span>`;
+  document.querySelector('.dbg.gd').innerHTML = `🏷 <span>${catNames[s.cat] || s.cat}</span>`;
+
+  // ── Intro ────────────────────────────────────────────────
+  const introEl = document.querySelector('[data-i18n="d_intro_body"]');
+  if (introEl) introEl.textContent = s.desc || '';
+
+  // Stats (derive from data)
+  const rating = parseFloat(s.rating) || 4.5;
+  document.querySelector('[data-i18n="d_yrs"]')?.parentElement &&
+    (document.querySelector('.st-row').innerHTML = `
+      <div class="st-i"><div class="st-n">${s.reviews || 0}</div><div class="st-l">${T('d_revs')}</div></div>
+      <div class="st-i"><div class="st-n">${(s.docs || []).length}</div><div class="st-l">${T('d_ver_t').replace(/[✅\s]/g,'')}</div></div>
+      <div class="st-i"><div class="st-n">${Math.round(rating * 20)}%</div><div class="st-l">${T('d_rate')}</div></div>
+    `);
+
+  // Eval bars
+  const evalPct = Math.round((rating / 5) * 100);
+  document.querySelectorAll('.ev-fill').forEach((bar, i) => {
+    bar.style.width = [evalPct, Math.min(evalPct + 3, 100), Math.min(evalPct + 5, 100), Math.max(evalPct - 5, 60)][i] + '%';
+  });
+
+  // ── Certified docs ───────────────────────────────────────
+  const verDiv = document.querySelector('[data-i18n="d_ver_t"]')?.nextElementSibling;
+  if (verDiv && s.docs) {
+    verDiv.innerHTML = s.docs.map(d =>
+      `<span style="font-size:13px;font-weight:700;color:var(--green)">✓ ${docLabels[d] || d}</span>`
+    ).join('') + (s.missing || []).map(d =>
+      `<span style="font-size:13px;font-weight:600;color:var(--t4)">○ ${docLabels[d] || d}</span>`
+    ).join('');
+  }
+
+  // ── Service tags ─────────────────────────────────────────
+  const detTags = document.getElementById('det-tags');
+  if (detTags) {
+    const relatedCats = Object.entries(catNames)
+      .filter(([k]) => k === s.cat || (s.cat === 'imm' && k === 'law') || (s.cat === 'law' && k === 'imm'))
+      .map(([, v]) => v);
+    detTags.innerHTML = relatedCats.map(t => `<span class="ht">${t}</span>`).join('');
+  }
+
+  // ── Contact (region-aware) ───────────────────────────────
+  const regionName = regLabel(s.region);
+  document.querySelector('[data-i18n="d_apt"]').textContent = regionName + ' · ' + T('d_apt').split('·').pop().trim();
+
+  // ── Reviews ─────────────────────────────────────────────
+  const dr = document.getElementById('det-reviews');
+  if (dr) {
+    const relatedRevs = REVIEWS.filter(r => r.company === s.name && r.status === 'visible');
+    const fallbackRevs = REVIEWS.filter(r => r.status === 'visible').slice(0, 2);
+    const showRevs = (relatedRevs.length ? relatedRevs : fallbackRevs).slice(0, 3);
+    const colors = ['linear-gradient(135deg,#2b7fff,#60a5fa)','linear-gradient(135deg,#059669,#34d399)','linear-gradient(135deg,#7c3aed,#a78bfa)'];
+    dr.innerHTML = showRevs.map((r, i) => `
+      <div${i > 0 ? ' style="border-top:1px solid var(--bdr2);padding-top:14px"' : ''}>
+        <div class="rst">${'★'.repeat(r.score)}${'☆'.repeat(5 - r.score)}</div>
+        <div class="rtxt">${r.text}</div>
+        <div class="rauth">
+          <div class="rav" style="background:${colors[i % 3]}">${r.user[0]}</div>
+          <div><div class="rnm">${r.user}</div><div class="rsv">${r.company}</div></div>
+        </div>
+      </div>`).join('');
+  }
+
   goPage('detail');
 }
 
@@ -1910,10 +2162,15 @@ function setLang(lang) {
 
 function setRegion(reg) {
   curRegion = reg;
+  curCat = 'all';
   const pill = document.getElementById('regPill');
   if (pill) pill.textContent = '📍 ' + regLabel(reg);
+  // Update loc-btn label too
+  const txt = document.getElementById('loc-txt');
+  if (txt) txt.textContent = regLabel(reg);
   renderCards();
   renderLB();
+  renderCats();
 }
 
 /* ============================================================
@@ -2440,18 +2697,29 @@ function renderSettings() {
 ============================================================ */
 window.addEventListener('DOMContentLoaded', ()=>{
   applyLang();
-  // Init region pill
-  const pill=document.getElementById('regPill');
-  if(pill) pill.textContent='📍 '+regLabel('NZ-AKL');
 });
 </script>
+
+
+<!-- DEMO CITY PICKER -->
+<div class="overlay" id="demo-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="max-width:520px">
+    <button class="mcls" onclick="document.getElementById('demo-overlay').classList.remove('open')">✕</button>
+    <h2 style="margin-bottom:6px">🗺️ 选择城市测试</h2>
+    <p style="font-size:13px;color:var(--t4);margin-bottom:20px">选一个城市，自动加载当地华人服务商数据</p>
+    <div id="demo-city-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px"></div>
+  </div>
+</div>
 
 <!-- IMPORT TOAST -->
 <div class="import-toast" id="import-toast">
   <span id="toast-ico">⏳</span>
-  <div style="flex:1"><div id="toast-msg">正在定位…</div>
-    <div class="toast-progress" id="toast-bar"></div></div>
+  <div style="flex:1;min-width:0">
+    <div id="toast-msg" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">正在加载…</div>
+    <div class="toast-progress" id="toast-bar"></div>
+  </div>
 </div>
+
 
 <script>
 /* ============================================================
@@ -2617,175 +2885,151 @@ function coordsToRegion(lat, lng) {
 
 function showToast(msg, progress, done) {
   const t = document.getElementById('import-toast');
-  const m = document.getElementById('toast-msg');
-  const b = document.getElementById('toast-bar');
-  const ico = document.getElementById('toast-ico');
-  m.textContent = msg;
-  ico.textContent = done ? '✅' : '⏳';
+  if (!t) return;
+  document.getElementById('toast-msg').textContent = msg;
+  document.getElementById('toast-ico').textContent = done ? '✅' : '⏳';
   t.classList.add('show');
+  const b = document.getElementById('toast-bar');
   if (b && progress >= 0) {
-    b.style.transition = 'none';
-    b.style.width = '0';
+    b.style.transition = 'none'; b.style.width = '0';
     setTimeout(() => {
       b.style.transition = `width ${progress < 100 ? 1.2 : 0.3}s linear`;
       b.style.width = progress + '%';
     }, 50);
   }
-  if (done) {
-    setTimeout(() => t.classList.remove('show'), 3000);
+  if (done) setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ── Demo city picker ─────────────────── */
+const DEMO_CITIES = [
+  {code:'NZ-AKL',flag:'🇳🇿',label:'奥克兰'},
+  {code:'NZ-WLG',flag:'🇳🇿',label:'惠灵顿'},
+  {code:'AU-SYD',flag:'🇦🇺',label:'悉尼'},
+  {code:'AU-MEL',flag:'🇦🇺',label:'墨尔本'},
+  {code:'AU-BNE',flag:'🇦🇺',label:'布里斯班'},
+  {code:'SG',    flag:'🇸🇬',label:'新加坡'},
+  {code:'HK',    flag:'🇭🇰',label:'香港'},
+  {code:'TW-TPE',flag:'🇹🇼',label:'台北'},
+  {code:'JP-TKY',flag:'🇯🇵',label:'东京'},
+  {code:'KR-SEO',flag:'🇰🇷',label:'首尔'},
+  {code:'CA-YYZ',flag:'🇨🇦',label:'多伦多'},
+  {code:'CA-YVR',flag:'🇨🇦',label:'温哥华'},
+  {code:'US-NYC',flag:'🇺🇸',label:'纽约'},
+  {code:'US-LAX',flag:'🇺🇸',label:'洛杉矶'},
+  {code:'US-SFO',flag:'🇺🇸',label:'旧金山'},
+  {code:'UK-LON',flag:'🇬🇧',label:'伦敦'},
+  {code:'DE-BER',flag:'🇩🇪',label:'柏林'},
+  {code:'FR-PAR',flag:'🇫🇷',label:'巴黎'},
+  {code:'AE-DXB',flag:'🇦🇪',label:'迪拜'},
+];
+
+function openDemoPicker() {
+  const grid = document.getElementById('demo-city-grid');
+  if (grid) {
+    grid.innerHTML = DEMO_CITIES.map(c => `
+      <button onclick="loadCityDemo('${c.code}','${c.label}')" style="
+        padding:12px 8px;border-radius:10px;border:1.5px solid var(--bdr);
+        background:none;font-size:13px;font-weight:700;cursor:pointer;
+        transition:var(--tr);font-family:inherit;text-align:center;color:var(--t2)
+      " onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)';this.style.background='var(--blue3)'"
+         onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--t2)';this.style.background='none'">
+        <div style="font-size:22px;margin-bottom:4px">${c.flag}</div>
+        ${c.label}
+      </button>`).join('');
   }
+  document.getElementById('demo-overlay').classList.add('open');
 }
 
-function hideToast() {
-  document.getElementById('import-toast').classList.remove('show');
+async function loadCityDemo(code, label) {
+  document.getElementById('demo-overlay').classList.remove('open');
+  curRegion = code;
+  curCat = 'all';
+  const sel = document.getElementById('regSel');
+  if (sel) sel.value = code;
+  // Show city on the GPS button
+  const btn = document.getElementById('loc-btn');
+  const ico = document.getElementById('loc-ico');
+  const txt = document.getElementById('loc-txt');
+  if (btn) btn.classList.add('done');
+  if (ico) ico.textContent = '✅';
+  if (txt) txt.textContent = label;
+
+  showToast(`📋 正在加载 ${label} 数据…`, 20, false);
+  await importRegionalData(code);
+  showToast(`✅ 已加载 ${label} ${REGIONAL_SEED[code]?.length||0} 个服务商`, 100, true);
+
+  renderCards(); renderLB(); renderRevGrid(); renderCats();
+  if (admLoggedIn) renderAdmPanel(curAdmPanel);
 }
 
+/* ── Real GPS detect ─────────────────── */
 async function detectLocation() {
   const btn = document.getElementById('loc-btn');
   const ico = document.getElementById('loc-ico');
   const txt = document.getElementById('loc-txt');
 
   if (!navigator.geolocation) {
-    showToast('⚠️ 浏览器不支持定位', -1, true); return;
+    showToast('⚠️ 浏览器不支持定位，请使用"选城市测试"', -1, true);
+    return;
   }
-
-  btn.classList.add('loading');
-  ico.textContent = '⌛';
-  showToast('📡 正在获取定位…', 10, false);
+  btn.classList.add('loading'); ico.textContent = '⌛';
+  showToast('📡 正在获取 GPS 坐标…', 15, false);
 
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       const { latitude: lat, longitude: lng } = pos.coords;
-      showToast('🌐 正在识别城市…', 35, false);
+      showToast('🌐 坐标匹配城市中…', 60, false);
 
-      // Reverse geocode with Nominatim (free, no key)
-      let cityName = '';
-      let detectedCode = coordsToRegion(lat, lng);
-
-      try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=zh`,
-          { headers: { 'Accept-Language': 'zh' } }
-        );
-        const data = await res.json();
-        const addr = data.address || {};
-        cityName = addr.city || addr.town || addr.county || addr.state || '';
-
-        // Refine region from address if we didn't match coords
-        if (!detectedCode) {
-          const country = (addr.country || '').toLowerCase();
-          const state = (addr.state || '').toLowerCase();
-          if (country.includes('new zealand') || country.includes('新西兰')) {
-            if (state.includes('auckland') || state.includes('奥克兰')) detectedCode = 'NZ-AKL';
-            else if (state.includes('wellington') || state.includes('惠灵顿')) detectedCode = 'NZ-WLG';
-            else detectedCode = 'NZ-AKL';
-          } else if (country.includes('australia') || country.includes('澳大利亚')) {
-            if (state.includes('new south wales')) detectedCode = 'AU-SYD';
-            else if (state.includes('victoria')) detectedCode = 'AU-MEL';
-            else if (state.includes('queensland')) detectedCode = 'AU-BNE';
-            else detectedCode = 'AU-SYD';
-          } else if (country.includes('singapore') || country.includes('新加坡')) {
-            detectedCode = 'SG';
-          } else if (country.includes('hong kong') || country.includes('香港')) {
-            detectedCode = 'HK';
-          } else if (country.includes('canada') || country.includes('加拿大')) {
-            if (state.includes('ontario') || state.includes('安大略')) detectedCode = 'CA-YYZ';
-            else if (state.includes('british columbia') || state.includes('不列颠哥伦比亚')) detectedCode = 'CA-YVR';
-            else detectedCode = 'CA-YYZ';
-          } else if (country.includes('united states') || country.includes('美国')) {
-            if (state.includes('california')) detectedCode = lat > 37 ? 'US-SFO' : 'US-LAX';
-            else if (state.includes('new york')) detectedCode = 'US-NYC';
-            else detectedCode = 'US-NYC';
-          } else if (country.includes('united kingdom') || country.includes('英国')) {
-            detectedCode = state.includes('england') && lat < 52.5 ? 'UK-LON' : 'UK-MAN';
-          } else if (country.includes('germany') || country.includes('德国')) {
-            detectedCode = 'DE-BER';
-          } else if (country.includes('france') || country.includes('法国')) {
-            detectedCode = 'FR-PAR';
-          } else if (country.includes('japan') || country.includes('日本')) {
-            detectedCode = 'JP-TKY';
-          } else if (country.includes('korea') || country.includes('韩国')) {
-            detectedCode = 'KR-SEO';
-          } else if (country.includes('united arab emirates') || country.includes('阿联酋')) {
-            detectedCode = 'AE-DXB';
-          }
-        }
-      } catch(e) {
-        // Silently use coordinate-based detection
-      }
-
-      if (!detectedCode) {
-        btn.classList.remove('loading');
-        showToast('⚠️ 暂无该地区数据，显示默认城市', -1, true);
+      let code = coordsToRegion(lat, lng);
+      if (!code) {
+        btn.classList.remove('loading'); ico.textContent = '🎯';
+        showToast('⚠️ 暂无该城市数据，请用"选城市测试"', -1, true);
         return;
       }
-
-      showToast('📋 正在加载当地服务商数据…', 65, false);
-
-      // Switch region
-      curRegion = detectedCode;
+      const label = regLabel(code);
+      curRegion = code;
       const sel = document.getElementById('regSel');
-      if (sel) sel.value = detectedCode;
-
-      // Inject regional seed data
-      await importRegionalData(detectedCode, cityName);
-
-      const regionLabel2 = regLabel(detectedCode);
+      if (sel) sel.value = code;
       const pill = document.getElementById('regPill');
-      if (pill) pill.textContent = '📍 ' + regionLabel2;
+      if (pill) pill.textContent = '📍 ' + label;
 
-      btn.classList.remove('loading');
-      btn.classList.add('done');
-      ico.textContent = '✅';
-      txt.textContent = cityName || regionLabel2;
+      await importRegionalData(code);
 
-      showToast(`✅ 已加载 ${regionLabel2} 本地服务商数据`, 100, true);
-      renderCards(); renderLB(); renderRevGrid();
+      btn.classList.remove('loading'); btn.classList.add('done');
+      ico.textContent = '✅'; txt.textContent = label;
+      showToast(`✅ 已定位到 ${label}，数据加载完成`, 100, true);
+      curCat = 'all';
+      renderCards(); renderLB(); renderRevGrid(); renderCats();
+      if (admLoggedIn) renderAdmPanel(curAdmPanel);
     },
     (err) => {
-      btn.classList.remove('loading');
-      ico.textContent = '🎯';
-      const msgs = {1:'位置权限被拒绝', 2:'无法获取位置', 3:'定位超时'};
-      showToast('❌ ' + (msgs[err.code] || '定位失败'), -1, true);
+      btn.classList.remove('loading'); ico.textContent = '🎯';
+      const msgs = {1:'⚠️ 定位权限被拒绝，请用"选城市测试"',2:'⚠️ 无法获取位置',3:'⚠️ 定位超时'};
+      showToast(msgs[err.code] || '⚠️ 定位失败', -1, true);
     },
-    { timeout: 8000, maximumAge: 60000 }
+    { timeout: 8000, maximumAge: 300000 }
   );
 }
 
-async function importRegionalData(code, cityName) {
+/* ── Import regional seed data ───────── */
+async function importRegionalData(code) {
   const seeds = REGIONAL_SEED[code];
   if (!seeds || !seeds.length) return;
-
-  // Remove old seeded entries (keep manually submitted ones)
-  SERVICES = SERVICES.filter(s => !s.uid || !s.uid.startsWith('S'));
-
-  // Add new ones with staggered effect
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'});
-
+  // Remove previous seeded entries
+  SERVICES = SERVICES.filter(s => !String(s.uid).startsWith('S') || parseInt(String(s.uid).slice(1)) < 1000);
+  const timeStr = new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
   for (let i = 0; i < seeds.length; i++) {
-    await new Promise(r => setTimeout(r, 80)); // slight stagger
-    const s = seeds[i];
-    const existing = SERVICES.find(x => x.uid === s.uid);
-    if (!existing) {
-      SERVICES.push({
-        ...s,
-        id: 1000 + i,
-        region: code,
-        time: timeStr,
-        status: 'approved',
-        lawyerStatus: 'none',
-        risk: [],
-      });
+    await new Promise(r => setTimeout(r, 60));
+    if (!SERVICES.find(x => x.uid === seeds[i].uid)) {
+      SERVICES.push({...seeds[i], id: 900+i, region: code, time: timeStr,
+        status:'approved', lawyerStatus:'none', risk:[]});
     }
-    showToast(`📋 导入中 ${i+1}/${seeds.length}：${s.name}`, 65 + Math.round((i+1)/seeds.length*30), false);
+    showToast(`📋 导入 ${i+1}/${seeds.length}：${seeds[i].name}`,
+      20 + Math.round((i+1)/seeds.length*75), false);
   }
-
-  // Update admin badge
   const badge = document.getElementById('badge-svc');
-  if (badge) badge.textContent = SERVICES.filter(s => s.status === 'pending').length;
+  if (badge) badge.textContent = SERVICES.filter(s=>s.status==='pending').length;
 }
 </script>
-
 </body>
 </html>
