@@ -12,7 +12,7 @@
 <link rel="manifest" href="/manifest.json">
 <!-- iOS icons (fallback if no icon files yet) -->
 <link rel="apple-touch-icon" href="/icon-192.png">
-<meta name="description" content="家人安全 · 人生轨迹 · 即时消息">
+<meta name="description" content="家人安全 · 人生轨迹 · 私密聊天">
 <title>CHRONO100</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
@@ -853,88 +853,12 @@ body.dark .login-card,body.dark .cr-bar,body.dark .bottom-tabs{background:var(--
 .pp-footer { text-align:center; padding:20px; color:#6E769E; font-size:11px; }
 [data-lang] { display: none; }
 
-
-/* ── 骨架屏动画 ── */
-@keyframes skPulse {
-  0%,100% { opacity:0.4; }
-  50%      { opacity:0.9; }
-}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
   <!-- OneSignal Push Notification SDK -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
-
-// ============================================================
-// ⚡ 缓存层 v1 — stale-while-revalidate
-// 用户切换tab立刻看到数据，后台静默刷新
-// ============================================================
-var _CACHE_TTL = {
-  today:    60 * 1000,        // 今日动态：1分钟
-  contacts: 5  * 60 * 1000,   // 联系人：5分钟
-  circle:   30 * 1000,        // 家人位置：30秒
-  feed:     2  * 60 * 1000,   // 朋友圈动态：2分钟
-  messages: 60 * 1000,        // 消息列表：1分钟
-  weather:  10 * 60 * 1000,   // 天气：10分钟
-};
-
-// 写缓存
-function cacheSet(key, data) {
-  try {
-    localStorage.setItem('_cache_' + key, JSON.stringify({
-      ts: Date.now(),
-      data: data
-    }));
-  } catch(e) {}
-}
-
-// 读缓存（返回数据或null）
-function cacheGet(key, ttl) {
-  try {
-    var raw = localStorage.getItem('_cache_' + key);
-    if (!raw) return null;
-    var obj = JSON.parse(raw);
-    if (Date.now() - obj.ts > (ttl || 5 * 60 * 1000)) return null; // 过期
-    return obj.data;
-  } catch(e) { return null; }
-}
-
-// 强制清除某个缓存（数据更新时调用）
-function cacheClear(key) {
-  try { localStorage.removeItem('_cache_' + key); } catch(e) {}
-}
-
-// 清除所有缓存（退出登录时调用）
-function cacheClearAll() {
-  try {
-    Object.keys(localStorage)
-      .filter(function(k){ return k.startsWith('_cache_'); })
-      .forEach(function(k){ localStorage.removeItem(k); });
-  } catch(e) {}
-}
-
-// 骨架屏HTML — 数据加载中的占位
-function skeletonHtml(rows, type) {
-  var rowH = type === 'chat' ? 64 : type === 'map' ? 0 : 52;
-  var html = '';
-  for (var i = 0; i < (rows || 3); i++) {
-    if (type === 'chat') {
-      html += '<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;opacity:'+(0.7-i*0.15)+'">'
-        + '<div style="width:44px;height:44px;border-radius:50%;background:var(--border);flex-shrink:0;animation:skPulse 1.4s ease-in-out '+(i*0.15)+'s infinite"></div>'
-        + '<div style="flex:1"><div style="height:13px;background:var(--border);border-radius:6px;width:60%;margin-bottom:6px;animation:skPulse 1.4s ease-in-out '+(i*0.15)+'s infinite"></div>'
-        + '<div style="height:11px;background:var(--border);border-radius:6px;width:85%;animation:skPulse 1.4s ease-in-out '+(i*0.2)+'s infinite"></div></div></div>';
-    } else {
-      html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;opacity:'+(0.7-i*0.15)+'">'
-        + '<div style="width:38px;height:38px;border-radius:10px;background:var(--border);flex-shrink:0;animation:skPulse 1.4s ease-in-out '+(i*0.15)+'s infinite"></div>'
-        + '<div style="flex:1"><div style="height:12px;background:var(--border);border-radius:6px;width:70%;margin-bottom:5px;animation:skPulse 1.4s ease-in-out '+(i*0.15)+'s infinite"></div>'
-        + '<div style="height:10px;background:var(--border);border-radius:6px;width:45%;animation:skPulse 1.4s ease-in-out '+(i*0.2)+'s infinite"></div></div></div>';
-    }
-  }
-  return html;
-}
-
-
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
@@ -971,7 +895,7 @@ function skeletonHtml(rows, type) {
     </div>
 
     <div class="login-title" id="loginTitle">登录 CHRONO100</div>
-    <div class="login-hint" id="loginHint">家人安全 · 人生轨迹 · 即时消息</div>
+    <div class="login-hint" id="loginHint">家人安全 · 人生轨迹 · 私密聊天</div>
 
     <!-- Login method tabs -->
     <div style="display:flex;background:var(--bg);border-radius:12px;padding:3px;margin-bottom:10px;border:1px solid var(--border)">
@@ -1103,25 +1027,22 @@ function skeletonHtml(rows, type) {
 
       <!-- 今日动态 -->
       <div style="margin:10px 16px 0;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:20px;border:1.5px solid rgba(255,255,255,.92);box-shadow:0 8px 32px rgba(74,159,212,.14);animation:cloudFloat1 6s ease-in-out infinite" id="todayArc">
-        <!-- 今日动态入口 — 点进去才看列表（餐桌原则）-->
-        <div style="display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer" onclick="openTodayDetail()">
+        <div style="display:flex;align-items:center;gap:7px;padding:12px 14px 10px;border-bottom:1px solid var(--border)">
           <div class="pulse-dot"></div>
-          <div style="font-size:14px;font-weight:600;color:var(--ink);flex:1" data-i18n-key="todayActivity">今日动态</div>
-          <div style="font-size:12px;color:var(--ink3)" id="todayCount"></div>
-          <div style="font-size:16px;color:var(--ink3)">›</div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink);flex:1" data-i18n-key="todayActivity">今日动态</div>
+          <div style="font-size:11px;color:var(--ink3)" id="todayCount"></div>
         </div>
-        <!-- AI一句话 — 合并进来，不单独占卡片 -->
-        <div id="todayAiSnippet" style="display:none;padding:10px 16px 13px;border-top:1px solid var(--border);background:rgba(13,18,40,.03)">
-          <div style="display:flex;align-items:flex-start;gap:9px">
-            <div style="width:22px;height:22px;border-radius:7px;flex-shrink:0;margin-top:1px;background:linear-gradient(135deg,rgba(56,189,248,.18),rgba(34,211,238,.1));border:0.5px solid rgba(56,189,248,.25);display:flex;align-items:center;justify-content:center;font-size:11px">✨</div>
-            <div style="flex:1">
-              <div id="todayAiWords" style="font-size:12.5px;color:var(--ink2);line-height:1.75;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif"></div>
-              <div style="font-size:10px;color:var(--blue2);margin-top:3px;cursor:pointer" onclick="openAIInsightFull()">深度分析 ›</div>
+        <div class="scroll-list-wrap" style="border-radius:0 0 0 0;overflow:hidden">
+          <div class="scroll-list-inner" id="todayListScroll" onscroll="onListScroll(this,'todayFade','todayBadge')">
+            <div id="todayList">
+              <div style="text-align:center;padding:16px;color:var(--ink3);font-size:12px">加载中…</div>
             </div>
           </div>
+          <div class="scroll-fade" id="todayFade" style="background:linear-gradient(to bottom,transparent,var(--card))"></div>
+          <div class="scroll-badge" id="todayBadge">↕ 滑动查看</div>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;gap:5px;padding:10px;border-top:1px solid var(--border);color:var(--blue2);font-size:12px;font-weight:500;cursor:pointer" onclick="openAddEvent()">
-          <span data-i18n-key="addRecord">＋ 添加今日记录</span>
+          <span data-i18n-key="addRecord">＋ 添加今日记录（显示在上方列表）</span>
         </div>
       </div>
 
@@ -1366,20 +1287,31 @@ function skeletonHtml(rows, type) {
         </div>
         <div style="width:34px;height:34px;border-radius:50%;background:var(--blue2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0" onclick="chatPlusBtn()" title="添加">＋</div>
       </div>
-      <!-- 消息列表 — 联系人+私信合并，按最新时间排序 -->
-      <div id="chat-panel-unified" style="overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0">
-        <!-- 隐藏但保留，供其他代码兼容 -->
-        <div id="contactsList" style="display:none"></div>
+      <!-- Tabs: 联系人 / 私信 / 动态 — 固定顶部 -->
+      <div class="chat-page-fixed" style="display:flex;background:var(--card);border-bottom:1px solid var(--border)">
+        <button class="chat-tab on" id="ctab-contacts" onclick="switchChatTab('contacts')" data-i18n-key="tabContacts">联系人</button>
+        <button class="chat-tab" id="ctab-dm" onclick="switchChatTab('dm')" data-i18n-key="tabDM">私信</button>
+        <button class="chat-tab" id="ctab-moments" onclick="switchChatTab('moments')" data-i18n-key="tabMoments">动态</button>
+      </div>
+      <!-- Contacts panel — 独立滚动 -->
+      <div id="chat-panel-contacts" style="overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0">
+        <div id="contactsList"></div>
+        <div class="pb"></div>
+      </div>
+      <!-- DM list — 独立滚动 -->
+      <div id="chat-panel-dm" style="display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0">
+        <div style="padding:10px 16px 4px">
+          <div style="position:relative">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none">🔍</span>
+            <input id="dmSearchInput" placeholder="搜索私信…" oninput="filterDmList(this.value)"
+              style="width:100%;padding:9px 14px 9px 36px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;color:var(--ink);font-family:inherit;box-sizing:border-box" />
+          </div>
+        </div>
         <div class="chat-list" id="chatList"></div>
         <div class="pb"></div>
       </div>
-      <!-- 保留兼容性（隐藏） -->
-      <div id="chat-panel-contacts" style="display:none"><div id="_contactsListLegacy"></div></div>
-      <div id="chat-panel-dm" style="display:none">
-        <input id="dmSearchInput" style="display:none" oninput="filterDmList(this.value)"/>
-      </div>
-      <!-- Moments feed — 已移至动态tab，此处保留但隐藏 -->
-      <div id="chat-panel-moments" style="display:none !important;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0">
+      <!-- Moments feed — 独立滚动 -->
+      <div id="chat-panel-moments" style="display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0">
         <div style="padding:10px 16px 4px">
           <div style="position:relative">
             <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none">🔍</span>
@@ -1389,27 +1321,6 @@ function skeletonHtml(rows, type) {
         </div>
         <div id="momentsFeed"></div>
         <div class="pb"></div>
-      </div>
-    </div>
-
-
-    <div class="page right" id="page-feed">
-      <div class="feed-page-inner" id="feedPageInner">
-        <!-- Feed header -->
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;flex-shrink:0">
-          <div style="font-size:20px;font-weight:700;color:var(--ink)">动态</div>
-          <div style="display:flex;gap:8px">
-            <div onclick="openFeedSearch()" style="width:34px;height:34px;border-radius:50%;background:var(--card);box-shadow:var(--sh2);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer">🔍</div>
-            <div onclick="openAddFeedPost()" style="width:34px;height:34px;border-radius:50%;background:var(--blue);box-shadow:0 4px 14px rgba(43,127,212,.35);display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;cursor:pointer">✏️</div>
-          </div>
-        </div>
-        <!-- Feed list -->
-        <div style="flex:1;overflow-y:auto;padding:0 0 16px" id="feedList">
-          <div style="text-align:center;padding:48px 16px;color:var(--ink3);font-size:13px">
-            <div style="font-size:36px;margin-bottom:12px;opacity:0.4">🌟</div>
-            <div>关注家人和朋友后<br>这里会显示他们的动态</div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -1578,7 +1489,7 @@ function skeletonHtml(rows, type) {
       <!-- Security card -->
       <div class="security-card">
         <div class="security-card-title" data-i18n-key="sSecurityTitle">🔒 数据安全承诺</div>
-        <div class="security-item" data-i18n-key="sSec1">消息传输全程 TLS 加密，端到端加密功能持续完善中</div>
+        <div class="security-item" data-i18n-key="sSec1">消息传输全程加密，端对端加密功能持续完善中</div>
         <div class="security-item" data-i18n-key="sSec2">位置仅在你授权的家庭圈内共享，每人独立控制</div>
         <div class="security-item" data-i18n-key="sSec3">可随时导出或删除你的全部数据</div>
       </div>
@@ -1591,29 +1502,24 @@ function skeletonHtml(rows, type) {
 
   </div><!-- /pages -->
 
-  <!-- Bottom tabs — 5 tabs -->
+  <!-- Bottom tabs -->
   <div class="bottom-tabs">
     <button class="tab-btn on" data-page="life" onclick="gotoPage('life')">
-      <span class="tab-icon">🏠</span>
-      <span class="tab-label">首页</span>
+      <span class="tab-icon">🗺</span>
+      <span class="tab-label" data-i18n-key="navLife">人生轨迹</span>
     </button>
     <button class="tab-btn" data-page="circle" onclick="gotoPage('circle')">
-      <span class="tab-icon">👨‍👩‍👧</span>
-      <span class="tab-label">家人</span>
+      <span class="tab-icon">🛡</span>
+      <span class="tab-label" data-i18n-key="navSafe">家人守护</span>
     </button>
     <button class="tab-btn" data-page="chat" onclick="gotoPage('chat')">
       <span class="tab-icon">💬</span>
-      <span class="tab-label">消息</span>
+      <span class="tab-label" data-i18n-key="navChat">私密聊天</span>
       <span class="tab-badge" id="chatBadge" style="display:none"></span>
-    </button>
-    <button class="tab-btn" data-page="feed" onclick="gotoPage('feed')">
-      <span class="tab-icon">🌟</span>
-      <span class="tab-label">动态</span>
-      <span class="tab-badge" id="feedBadge" style="display:none"></span>
     </button>
     <button class="tab-btn" data-page="me" onclick="gotoPage('me')">
       <span class="tab-icon">👤</span>
-      <span class="tab-label">我的</span>
+      <span class="tab-label" data-i18n-key="navMe">我的</span>
     </button>
   </div>
 </div><!-- /app -->
@@ -2242,7 +2148,7 @@ var I18N = {
     fontPreviewText:'你好，这是字体预览效果',
     fontPreviewSub:'家人平安 · 人生轨迹 · 记录美好',
     fontSmall:'小',fontMedSmall:'较小',fontNormal:'标准',fontMedLarge:'较大',fontLarge:'大',
-    loginHint:'家人安全 · 人生轨迹 · 即时消息',
+    loginHint:'家人安全 · 人生轨迹 · 私密聊天',
     loginNotice:'🔒 请登录或注册账号，不支持访客模式',
     tabPhone:'📱 手机',
     lbl_phone:'手机号',
@@ -2505,7 +2411,7 @@ var I18N = {
     checkInDesc:'点击上传位置 → 家人立刻看到你在哪里',
     langSettingLabel:'语言',
     lifeFootprint:'人生足迹',
-    navChat:'消息',
+    navChat:'私密聊天',
     navMe:'我的',
     navSafe:'家人守护',
     navFeed:'家人动态',
@@ -3152,7 +3058,7 @@ var I18N = {
     checkInDesc:'點擊上傳位置 → 家人立刻看到你在哪裡',
     langSettingLabel:'語言',
     lifeFootprint:'人生足跡',
-    navChat:'消息',
+    navChat:'私密聊天',
     navMe:'我的',
     navSafe:'家人守護',
     navFeed:'家人動態',
@@ -4660,7 +4566,7 @@ async function enterApp() {
   buildGrandpaBattery();
   showFirstRunIfNeeded();
   setTimeout(function() {
-    try { cacheClear('today'); loadTodayActivity(); } catch(e) {}
+    try { loadTodayActivity(); } catch(e) {}
     try { loadMomentsFromDB(); } catch(e) {}
     // 天气：先读缓存，再异步刷新
     try { if (!loadWeatherFromCache()) loadWeather(); else setTimeout(loadWeather, 3000); } catch(e) {}
@@ -5030,83 +4936,7 @@ async function initPushNotifications() {}
 // ============================================================
 // NAVIGATION
 // ============================================================
-var PAGES = ['life', 'circle', 'chat', 'feed', 'me'];
-
-
-// ── 动态页加载 ──
-async 
-function renderFeedList(items) {
-  var list = document.getElementById('feedList');
-  if (!list || !items || !items.length) return;
-  var uid = localStorage.getItem('c100_uid') || '';
-  var html = items.slice(0, 30).map(function(m) {
-    var name = m._displayName || m.user_id === uid ? (userName||'我') : '家人';
-    var time = fmtTime ? fmtTime(m.taken_at || m.created_at) : '';
-    var imgs = m.image_urls;
-    var imgArr = Array.isArray(imgs) ? imgs : (imgs ? [imgs] : []);
-    var imgHtml = imgArr.length ? '<div style="width:100%;height:180px;background:var(--blue-lt);overflow:hidden"><img src="'+esc(imgArr[0])+'" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none'"></div>' : '';
-    return '<div style="background:var(--card);margin:0 16px 12px;border-radius:18px;box-shadow:var(--sh2);border:1.5px solid rgba(255,255,255,.9);overflow:hidden">'
-      + '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px 8px">'
-      + '<div style="width:38px;height:38px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">'+(m._emoji||'😊')+'</div>'
-      + '<div><div style="font-size:13px;font-weight:600;color:var(--ink)">'+esc(name)+'</div>'
-      + '<div style="font-size:10.5px;color:var(--ink3);margin-top:1px">'+time+'</div></div>'
-      + '<div style="margin-left:auto;color:var(--ink3);font-size:18px;cursor:pointer">···</div></div>'
-      + (m.title ? '<div style="font-size:13.5px;color:var(--ink);line-height:1.75;padding:0 14px 12px">'+esc(m.title)+'</div>' : '')
-      + imgHtml
-      + '<div style="display:flex;border-top:1px solid var(--border)">'
-      + '<div style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:var(--ink3);padding:10px 4px;cursor:pointer" onclick="likeMoment(''+m.id+'')">🤍 赞</div>'
-      + '<div style="width:1px;background:var(--border);margin:6px 0"></div>'
-      + '<div style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:var(--ink3);padding:10px 4px;cursor:pointer">💬 评论</div>'
-      + '<div style="width:1px;background:var(--border);margin:6px 0"></div>'
-      + '<div style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:var(--ink3);padding:10px 4px;cursor:pointer">↗️ 分享</div>'
-      + '</div></div>';
-  }).join('');
-  list.innerHTML = html || '<div style="text-align:center;padding:48px 16px;color:var(--ink3);font-size:13px"><div style="font-size:36px;margin-bottom:12px;opacity:0.4">🌟</div><div>还没有动态</div></div>';
-}
-
-function openFeedSearch() { toast('搜索功能即将上线'); }
-function openAddFeedPost() { openAddEvent(); gotoPage('life'); }
-
-
-// ── 今日动态详情（点击入口弹出）──
-function openTodayDetail() {
-  // 复用现有的 overlay 或直接创建一个底部弹窗
-  var ov = document.getElementById('todayDetailOv');
-  if (!ov) {
-    ov = document.createElement('div');
-    ov.id = 'todayDetailOv';
-    ov.style.cssText = 'position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.45);display:flex;flex-direction:column;justify-content:flex-end;opacity:0;transition:opacity .25s';
-    ov.innerHTML = '<div id="todayDetailSheet" style="background:var(--bg);border-radius:24px 24px 0 0;max-height:85vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)">'
-      + '<div style="display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)">'
-      + '<div class="pulse-dot" style="margin-right:8px"></div>'
-      + '<div style="font-size:15px;font-weight:700;color:var(--ink);flex:1">今日动态</div>'
-      + '<div onclick="closeTodayDetail()" style="font-size:22px;color:var(--ink3);cursor:pointer;padding:4px">×</div></div>'
-      + '<div style="flex:1;overflow-y:auto;padding-bottom:20px"><div id="todayDetailList"><div style="text-align:center;padding:24px;color:var(--ink3);font-size:12px">加载中…</div></div></div>'
-      + '<div style="padding:12px 16px;border-top:1px solid var(--border)">'
-      + '<div onclick="openAddEvent();closeTodayDetail();" style="display:flex;align-items:center;justify-content:center;gap:5px;padding:12px;background:var(--blue2);border-radius:14px;color:#fff;font-size:13px;font-weight:600;cursor:pointer">＋ 添加今日记录</div></div>'
-      + '</div>';
-    ov.onclick = function(e){ if(e.target===ov) closeTodayDetail(); };
-    document.body.appendChild(ov);
-  }
-  // 把今日列表内容复制过来
-  var src = document.getElementById('todayList');
-  var dst = document.getElementById('todayDetailList');
-  if (src && dst) dst.innerHTML = src.innerHTML;
-  // 动画
-  ov.style.display = 'flex';
-  setTimeout(function(){
-    ov.style.opacity = '1';
-    document.getElementById('todayDetailSheet').style.transform = 'translateY(0)';
-  }, 10);
-}
-
-function closeTodayDetail() {
-  var ov = document.getElementById('todayDetailOv');
-  if (!ov) return;
-  ov.style.opacity = '0';
-  document.getElementById('todayDetailSheet').style.transform = 'translateY(100%)';
-  setTimeout(function(){ ov.style.display = 'none'; }, 300);
-}
+var PAGES = ['life', 'circle', 'chat', 'me'];
 
 function gotoPage(name) {
   if (name === curPage) return;
@@ -5136,7 +4966,7 @@ function gotoPage(name) {
     if (name === 'life') {
       updateGreeting();
     } else {
-      var pageTitles = { circle: L.pageSafe||'家人守护', chat: '消息', feed: '动态', me: L.pageMe||'个人设置' };
+      var pageTitles = { circle: L.pageSafe||'家人守护', chat: L.pageChat||'私密聊天', me: L.pageMe||'个人设置' };
       hGreet.textContent = pageTitles[name] || '';
     }
   }
@@ -5146,14 +4976,6 @@ function gotoPage(name) {
   // 相机按钮只在人生轨迹页显示
   var _cams = document.querySelectorAll('.cam-nav-btn');
   for (var _i=0;_i<_cams.length;_i++) { _cams[_i].style.display = name === 'life' ? '' : 'none'; }
-  if (name === 'feed') {
-    var nowF = Date.now();
-    var lastFeed = window._lastFeedLoad || 0;
-    if (nowF - lastFeed > 60000) {
-      window._lastFeedLoad = nowF;
-      setTimeout(loadFeedPage, 200);
-    }
-  }
   if (name === 'circle') {
     var nowC = Date.now();
     var lastCircle = window._lastCircleLoad || 0;
@@ -5181,11 +5003,8 @@ function gotoPage(name) {
     }
   }
   if (name === 'chat') {
-    setTimeout(function(){
-      loadRealContacts();
-      var u=document.getElementById('chat-panel-unified');
-      if(u) u.style.display='';
-    }, 100);
+    setTimeout(loadRealContacts, 100);
+    // 打开聊天页 → 清除角标
     markAllRead();
   }
   // Show feed FAB only on feed page
@@ -5225,18 +5044,6 @@ var CHATS = []; // empty by default — loaded from circles table
 async function loadRealContacts() {
   var client = sb();
   if (!client) { buildChatList(); return; }
-
-  // ⚡ 先显示缓存联系人（0ms）
-  var cachedContacts = cacheGet('contacts', _CACHE_TTL.contacts);
-  if (cachedContacts) {
-    CHATS = cachedContacts;
-    buildChatList();
-    buildContactsList();
-    // 缓存未过期一半就不请求
-    var cacheAge = Date.now() - (JSON.parse(localStorage.getItem('_cache_contacts')||'{}').ts||0);
-    if (cacheAge < _CACHE_TTL.contacts / 2) return;
-  }
-
   try {
     var uid = await getUid();
     if (!uid) { buildChatList(); return; }
@@ -5274,8 +5081,6 @@ async function loadRealContacts() {
       CHATS = [];
     }
   } catch(e) { console.warn('loadRealContacts error:', e); }
-  // ⚡ 保存联系人缓存
-  cacheSet('contacts', CHATS);
   buildChatList();
   buildContactsList();
   refreshChatPreviews();
@@ -5584,7 +5389,6 @@ function buildChatList() {
   }
 
   list.innerHTML = html;
-    cacheSet('messages', html);
 }
 var _cpt=null;
 function chatTouchStart(e,i){_cpt=setTimeout(function(){chatLongPress(null,i);},600);}
@@ -6411,16 +6215,16 @@ function chatPlusBtn() {
 }
 
 function switchChatTab(tab) {
-  // 统一消息页：忽略contacts/dm区分，始终显示chatList
-  // 只处理moments特殊情况
+  document.querySelectorAll('.chat-tab').forEach(function(t) {
+    t.classList.toggle('on', t.id === 'ctab-' + tab);
+  });
+  document.getElementById('chat-panel-contacts').style.display = tab === 'contacts' ? '' : 'none';
+  document.getElementById('chat-panel-dm').style.display = tab === 'dm' ? '' : 'none';
+  document.getElementById('chat-panel-moments').style.display = tab === 'moments' ? '' : 'none';
   var fab = document.getElementById('momentsFab');
-  if (fab) fab.style.display = 'none';
-  if (tab === 'moments') {
-    loadRealMoments_feed();
-  }
-  // 确保统一面板可见
-  var unified = document.getElementById('chat-panel-unified');
-  if (unified) unified.style.display = '';
+  if (fab) fab.style.display = tab === 'moments' ? 'flex' : 'none';
+  if (tab === 'moments') loadRealMoments_feed();
+  if (tab === 'contacts') buildContactsList();
 }
 
 // ── CONTACTS LIST ──────────────────────────────────────────────
@@ -6525,12 +6329,6 @@ function filterMomentsFeed(q) {
 
 // ── FEED PAGE (家人动态 standalone tab) ──
 async function loadFeedPage() {
-  // ⚡ 先显示缓存动态（0ms）
-  var cachedFeed = cacheGet('feed', _CACHE_TTL.feed);
-  if (cachedFeed && cachedFeed.length > 0) {
-    window._momentsFeedData = cachedFeed;
-    buildMomentsFeed();
-  }
   try {
     // Load contacts if not yet loaded
     if (!CHATS || !CHATS.length) await loadRealContacts();
@@ -7065,16 +6863,6 @@ async function shareMoment(id, txt) {
 async function loadRealMoments_feed() {
   var client = sb();
   if (!client) { buildMomentsFeed(); return; }
-
-  // ⚡ 先显示缓存动态（0ms）
-  var cachedFeed = cacheGet('feed', _CACHE_TTL.feed);
-  if (cachedFeed) {
-    window._momentsFeedData = cachedFeed;
-    buildMomentsFeed();
-    var cacheAge = Date.now() - (JSON.parse(localStorage.getItem('_cache_feed')||'{}').ts||0);
-    if (cacheAge < _CACHE_TTL.feed / 2) return;
-  }
-
   try {
     var uid = await getUid();
 
@@ -7108,9 +6896,6 @@ async function loadRealMoments_feed() {
       .limit(60);
 
     if (res.data && res.data.length > 0) {
-      // ⚡ 保存动态缓存
-      cacheSet('feed', res.data);
-      window._momentsFeedData = res.data;
       var feedData = res.data.filter(function(m) {
         // Case 1: visibility column exists and has a value → user explicitly shared
         if (m.visibility !== undefined && m.visibility !== null && m.visibility !== '') {
@@ -8220,7 +8005,7 @@ async function saveEvent() {
     toast('📅 已切换到 ' + lifeYear + ' 年查看记录');
   }
 
-  await cacheClear('today'); loadTodayActivity();
+  await loadTodayActivity();
   loadMomentsFromDB();
   _allYearsMomentsCache = []; // force refresh of all-years cache
 
@@ -8465,15 +8250,6 @@ async function uploadMyLocation() {
 async function loadRealCircle_impl() {
   var client = sb();
   if (!client) { showEmptyCircle(); return; }
-
-  // ⚡ 先显示缓存的家人位置（0ms）
-  var cachedCircle = cacheGet('circle', _CACHE_TTL.circle);
-  if (cachedCircle) {
-    initSafetyMap(cachedCircle.myLoc, cachedCircle.circles, cachedCircle.locs, cachedCircle.profiles);
-    var cacheAge = Date.now() - (JSON.parse(localStorage.getItem('_cache_circle')||'{}').ts||0);
-    if (cacheAge < _CACHE_TTL.circle / 2) return; // 15秒内不重复请求
-  }
-
   try {
     var uid = await getUid();
     if (!uid) { showEmptyCircle(); initSafetyMap(null, [], {}); return; }
@@ -8584,7 +8360,6 @@ async function loadRealCircle_impl() {
       list.innerHTML = html;
     }
 
-    cacheSet('circle', {myLoc: myLoc, circles: circles, locs: locs, profiles: profiles}); // ⚡ 缓存家人位置
     initSafetyMap(myLoc, circles, locs, profiles);
 
   } catch(e) { console.warn('loadRealCircle_impl error:', e); showEmptyCircle(); }
@@ -8864,34 +8639,13 @@ function loadWeatherFromCache() {
   } catch(e) { return false; }
 }
 
-
-// 今日动态展开/收起
-var _todayExpanded = false;
-function toggleTodayExpand() {
-  _todayExpanded = !_todayExpanded;
-  var panel = document.getElementById('todayExpandPanel');
-  var arrow = document.getElementById('todayArrow');
-  if (panel) panel.style.display = _todayExpanded ? '' : 'none';
-  if (arrow) arrow.style.transform = _todayExpanded ? 'rotate(90deg)' : '';
-}
 async function loadTodayActivity() {
   var client = sb();
   updateGreeting();
   var safetyBar = document.getElementById('safetyBar');
   var noBar = document.getElementById('noContactBar');
   var list = document.getElementById('todayList');
-
-  // ⚡ 先显示缓存（0ms）
-  var cached = cacheGet('today', _CACHE_TTL.today);
-  if (cached && list) {
-    list.innerHTML = cached;
-    // 缓存有效期内不重新请求
-    // 缓存新鲜（30秒内）则不重新请求
-    var _cacheAge = Date.now() - ((JSON.parse(localStorage.getItem('_cache_today')||'{}').ts)||0);
-    if (_cacheAge < 30000) return;
-  } else if (list) {
-    list.innerHTML = skeletonHtml(3, 'today');
-  }
+  if (list) list.innerHTML = ''; // clear loading immediately
 
   var uid = await getUid();
 
@@ -9045,7 +8799,6 @@ async function loadTodayActivity() {
     } else {
       if(count)count.textContent=items.length+' 条';
       window._todayItemsCache=items;
-      cacheSet('today', items); // ⚡ 缓存今日动态
       window._lastTodayLoad = Date.now(); // cache timestamp
       renderTodayList();
     }
@@ -11016,7 +10769,7 @@ function openPrivacyPolicy() {
   
   // Inject privacy content
   var ppContent = document.getElementById('ppContent');
-  ppContent.innerHTML = '\n<!-- HEADER -->\n<header class="site-header">\n  <div class="header-inner">\n    <div class="logo">CHRONO<span>100</span></div>\n    <div class="lang-switcher">\n      <button class="lang-btn active" onclick="setLang(\'zh\',this)">简体</button>\n      <button class="lang-btn" onclick="setLang(\'zh-hant\',this)">繁體</button>\n      <button class="lang-btn" onclick="setLang(\'en\',this)">EN</button>\n    </div>\n  </div>\n</header>\n\n<!-- HERO -->\n<div class="hero">\n  <div class="hero-badge">\n    <span data-lang="zh">数据主权 · 海外华人隐私保护</span>\n    <span data-lang="zh-hant">數據主權 · 海外華人隱私保護</span>\n    <span data-lang="en">Data Sovereignty · Privacy for Overseas Chinese</span>\n  </div>\n  <h1>\n    <span data-lang="zh">隐私政策</span>\n    <span data-lang="zh-hant">隱私政策</span>\n    <span data-lang="en">Privacy Policy</span>\n  </h1>\n  <p class="hero-sub">\n    <span data-lang="zh">适用于所有 Chrono100 用户</span>\n    <span data-lang="zh-hant">適用於所有 Chrono100 用戶</span>\n    <span data-lang="en">Applicable to all Chrono100 users</span>\n  </p>\n  <p class="hero-date">\n    <span data-lang="zh">生效日期：2026年4月1日 · 版本 V1.0</span>\n    <span data-lang="zh-hant">生效日期：2026年4月1日 · 版本 V1.0</span>\n    <span data-lang="en">Effective: April 1, 2026 · Version V1.0</span>\n  </p>\n</div>\n\n<!-- MAIN -->\n<div class="container">\n\n  <!-- Commitment -->\n  <div class="commitment">\n    <h3>\n      <span data-lang="zh">我们的核心承诺</span>\n      <span data-lang="zh-hant">我們的核心承諾</span>\n      <span data-lang="en">Our Core Commitment</span>\n    </h3>\n    <p data-lang="zh">Chrono100 由新西兰注册公司运营。所有用户数据存储于新西兰及澳大利亚境内服务器，受当地法律保护。</p>\n    <p data-lang="zh">我们不向任何外国政府、广告商或数据经纪商出售或共享您的个人数据。</p>\n    <p data-lang="zh-hant">Chrono100 由紐西蘭注冊公司營運。所有用戶數據存儲於紐西蘭及澳大利亞境內伺服器，受當地法律保護。</p>\n    <p data-lang="zh-hant">我們不向任何外國政府、廣告商或數據經紀商出售或共享您的個人數據。</p>\n    <p data-lang="en">Chrono100 is operated by a New Zealand registered company. All user data is stored on servers in New Zealand and Australia, protected under local law.</p>\n    <p data-lang="en">We do not sell or share your personal data with any foreign government, advertiser, or data broker.</p>\n  </div>\n\n  <!-- §1 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">1</span>\n      <span data-lang="zh">我们收集的信息</span>\n      <span data-lang="zh-hant">我們收集的資訊</span>\n      <span data-lang="en">Information We Collect</span>\n    </div>\n    <p class="sub-title">\n      <span data-lang="zh">1.1 您主动提供的信息</span>\n      <span data-lang="zh-hant">1.1 您主動提供的資訊</span>\n      <span data-lang="en">1.1 Information You Provide</span>\n    </p>\n    <ul class="policy-list">\n      <li data-lang="zh">注册信息：姓名（可使用昵称）、电子邮件地址、手机号码</li>\n      <li data-lang="zh">个人资料：头像、简介（均为可选）</li>\n      <li data-lang="zh">通讯内容：私信、群聊消息（传输层加密，端到端加密开发中）</li>\n      <li data-lang="zh">生活轨迹：您主动记录的地点、照片、事件备注</li>\n      <li data-lang="zh-hant">註冊資訊：姓名（可使用暱稱）、電子郵件地址、手機號碼</li>\n      <li data-lang="zh-hant">個人資料：頭像、簡介（均為可選）</li>\n      <li data-lang="zh-hant">通訊內容：私訊、群聊消息（傳輸層加密，端到端加密開發中）</li>\n      <li data-lang="zh-hant">生活軌跡：您主動記錄的地點、照片、事件備注</li>\n      <li data-lang="en">Registration: name (nickname accepted), email address, phone number</li>\n      <li data-lang="en">Profile: avatar, bio (all optional)</li>\n      <li data-lang="en">Communications: messages and group chats (TLS encrypted, E2E encryption in development)</li>\n      <li data-lang="en">Life timeline: locations, photos and notes you actively record</li>\n    </ul>\n    <p class="sub-title">\n      <span data-lang="zh">1.2 自动收集的技术信息</span>\n      <span data-lang="zh-hant">1.2 自動收集的技術資訊</span>\n      <span data-lang="en">1.2 Automatically Collected Information</span>\n    </p>\n    <ul class="policy-list">\n      <li data-lang="zh">设备信息：操作系统、浏览器类型、设备型号</li>\n      <li data-lang="zh">位置信息：仅在您明确授权后收集GPS坐标</li>\n      <li data-lang="zh">使用日志：功能使用频率、匿名错误日志（不含内容）</li>\n      <li data-lang="zh-hant">設備資訊：作業系統、瀏覽器類型、設備型號</li>\n      <li data-lang="zh-hant">位置資訊：僅在您明確授權後收集GPS座標</li>\n      <li data-lang="zh-hant">使用日誌：功能使用頻率、匿名錯誤日誌（不含內容）</li>\n      <li data-lang="en">Device info: OS, browser type, device model</li>\n      <li data-lang="en">Location: GPS coordinates only when you explicitly grant permission</li>\n      <li data-lang="en">Usage logs: feature frequency, anonymous error logs (no content)</li>\n    </ul>\n    <p class="note" data-lang="zh">我们不收集您的通讯录、相册或麦克风数据，除非您明确授权特定功能使用。</p>\n    <p class="note" data-lang="zh-hant">我們不收集您的通訊錄、相冊或麥克風數據，除非您明確授權特定功能使用。</p>\n    <p class="note" data-lang="en">We do not access your contacts, photo library, or microphone unless you explicitly grant permission for a specific feature.</p>\n  </div>\n\n  <!-- §2 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">2</span>\n      <span data-lang="zh">数据存储与主权</span>\n      <span data-lang="zh-hant">數據存儲與主權</span>\n      <span data-lang="en">Data Storage & Sovereignty</span>\n    </div>\n    <table class="policy-table">\n      <tr>\n        <th data-lang="zh">项目</th><th data-lang="zh">详情</th>\n        <th data-lang="zh-hant">項目</th><th data-lang="zh-hant">詳情</th>\n        <th data-lang="en">Item</th><th data-lang="en">Details</th>\n      </tr>\n      <tr>\n        <td data-lang="zh">服务器位置</td><td data-lang="zh">新西兰 Auckland / 澳大利亚 Sydney（AWS ap-southeast-2）</td>\n        <td data-lang="zh-hant">伺服器位置</td><td data-lang="zh-hant">紐西蘭 Auckland / 澳大利亞 Sydney（AWS ap-southeast-2）</td>\n        <td data-lang="en">Server Location</td><td data-lang="en">New Zealand Auckland / Australia Sydney (AWS ap-southeast-2)</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">传输加密</td><td data-lang="zh">TLS 1.3 全程加密</td>\n        <td data-lang="zh-hant">傳輸加密</td><td data-lang="zh-hant">TLS 1.3 全程加密</td>\n        <td data-lang="en">Transport Encryption</td><td data-lang="en">TLS 1.3 end-to-end</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">静态加密</td><td data-lang="zh">AES-256 数据库加密</td>\n        <td data-lang="zh-hant">靜態加密</td><td data-lang="zh-hant">AES-256 資料庫加密</td>\n        <td data-lang="en">At-Rest Encryption</td><td data-lang="en">AES-256 database encryption</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">聊天内容</td><td data-lang="zh">TLS 1.3传输加密，端到端加密功能持续完善中</td>\n        <td data-lang="zh-hant">聊天內容</td><td data-lang="zh-hant">TLS 1.3傳輸加密，端到端加密功能持續完善中</td>\n        <td data-lang="en">Chat Messages</td><td data-lang="en">TLS transport encrypted; E2E encryption in development</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">数据保留期</td><td data-lang="zh">账户活跃期间 + 注销后30天彻底删除</td>\n        <td data-lang="zh-hant">數據保留期</td><td data-lang="zh-hant">帳戶活躍期間 + 登出後30天徹底刪除</td>\n        <td data-lang="en">Retention Period</td><td data-lang="en">Active account period + 30 days after deletion request</td>\n      </tr>\n    </table>\n\n    <p class="note" data-lang="zh">我们每年发布透明度报告，公示所有数据请求及处理情况。</p>\n    <p class="note" data-lang="zh-hant">我們每年發布透明度報告，公示所有數據請求及處理情況。</p>\n    <p class="note" data-lang="en">We publish an annual transparency report disclosing all data requests received and how they were handled.</p>\n  </div>\n\n  <!-- §3 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">3</span>\n      <span data-lang="zh">数据使用目的</span>\n      <span data-lang="zh-hant">數據使用目的</span>\n      <span data-lang="en">How We Use Your Data</span>\n    </div>\n    <ul class="policy-list">\n      <li data-lang="zh">提供产品核心功能：定位共享、聊天、轨迹记录</li>\n      <li data-lang="zh">账户安全验证与反欺诈</li>\n      <li data-lang="zh">使用匿名化聚合数据改进产品</li>\n      <li data-lang="zh">响应您的客服请求</li>\n      <li data-lang="zh-hant">提供產品核心功能：定位共享、聊天、軌跡記錄</li>\n      <li data-lang="zh-hant">帳戶安全驗證與反欺詐</li>\n      <li data-lang="zh-hant">使用匿名化聚合數據改進產品</li>\n      <li data-lang="zh-hant">響應您的客服請求</li>\n      <li data-lang="en">Providing core features: location sharing, chat, timeline recording</li>\n      <li data-lang="en">Account security verification and fraud prevention</li>\n      <li data-lang="en">Product improvement using anonymised aggregate statistics</li>\n      <li data-lang="en">Responding to your support requests</li>\n    </ul>\n    <div class="highlight-box" style="margin-top:16px">\n      <p data-lang="zh"><strong>我们绝不将您的数据用于：</strong></p>\n      <p data-lang="zh">出售给广告商 · 政治分析或内容审查 · 向第三方平台同步（包括微信、微博）· 训练对外销售的AI模型</p>\n      <p data-lang="zh-hant"><strong>我們絕不將您的數據用於：</strong></p>\n      <p data-lang="zh-hant">出售給廣告商 · 政治分析或內容審查 · 向第三方平台同步（包括微信、微博）· 訓練對外銷售的AI模型</p>\n      <p data-lang="en"><strong>We will never use your data for:</strong></p>\n      <p data-lang="en">Selling to advertisers · Political analysis or content censorship · Syncing to third-party platforms (including WeChat, Weibo) · Training AI models sold externally</p>\n    </div>\n  </div>\n\n  <!-- §4 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">4</span>\n      <span data-lang="zh">您的数据权利</span>\n      <span data-lang="zh-hant">您的數據權利</span>\n      <span data-lang="en">Your Data Rights</span>\n    </div>\n    <p class="body-text" data-lang="zh">根据新西兰《隐私法2020》及GDPR相关原则，您享有以下权利：</p>\n    <p class="body-text" data-lang="zh-hant">根據紐西蘭《隱私法2020》及GDPR相關原則，您享有以下權利：</p>\n    <p class="body-text" data-lang="en">Under New Zealand\'s Privacy Act 2020 and relevant GDPR principles, you have the following rights:</p>\n    <table class="policy-table" style="margin-top:12px">\n      <tr>\n        <th data-lang="zh">权利</th><th data-lang="zh">说明</th>\n        <th data-lang="zh-hant">權利</th><th data-lang="zh-hant">說明</th>\n        <th data-lang="en">Right</th><th data-lang="en">Description</th>\n      </tr>\n      <tr>\n        <td data-lang="zh">访问权</td><td data-lang="zh">申请获取我们持有的您的全部个人数据副本</td>\n        <td data-lang="zh-hant">存取權</td><td data-lang="zh-hant">申請獲取我們持有的您的全部個人數據副本</td>\n        <td data-lang="en">Right of Access</td><td data-lang="en">Request a copy of all personal data we hold about you</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">更正权</td><td data-lang="zh">要求更正不准确或不完整的数据</td>\n        <td data-lang="zh-hant">更正權</td><td data-lang="zh-hant">要求更正不準確或不完整的數據</td>\n        <td data-lang="en">Right to Rectification</td><td data-lang="en">Request correction of inaccurate or incomplete data</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">删除权</td><td data-lang="zh">要求彻底删除您的账户及所有相关数据</td>\n        <td data-lang="zh-hant">刪除權</td><td data-lang="zh-hant">要求徹底刪除您的帳戶及所有相關數據</td>\n        <td data-lang="en">Right to Erasure</td><td data-lang="en">Request complete deletion of your account and all associated data</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">可携带权</td><td data-lang="zh">以机器可读格式导出您的全部数据</td>\n        <td data-lang="zh-hant">可攜帶權</td><td data-lang="zh-hant">以機器可讀格式匯出您的全部數據</td>\n        <td data-lang="en">Data Portability</td><td data-lang="en">Export all your data in a machine-readable format</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">撤回同意权</td><td data-lang="zh">随时撤回您此前给予的数据授权</td>\n        <td data-lang="zh-hant">撤回同意權</td><td data-lang="zh-hant">隨時撤回您此前給予的數據授權</td>\n        <td data-lang="en">Right to Withdraw Consent</td><td data-lang="en">Withdraw any previously granted data authorisation at any time</td>\n      </tr>\n    </table>\n    <p class="note" data-lang="zh" style="margin-top:14px">行使上述权利，请发送邮件至 privacy@chrono100.com，我们将在15个工作日内响应。</p>\n    <p class="note" data-lang="zh-hant" style="margin-top:14px">行使上述權利，請發送郵件至 privacy@chrono100.com，我們將在15個工作日內響應。</p>\n    <p class="note" data-lang="en" style="margin-top:14px">To exercise any of these rights, email privacy@chrono100.com. We will respond within 15 business days.</p>\n  </div>\n\n  <!-- §5 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">5</span>\n      <span data-lang="zh">数据安全措施</span>\n      <span data-lang="zh-hant">數據安全措施</span>\n      <span data-lang="en">Security Measures</span>\n    </div>\n    <ul class="policy-list">\n      <li data-lang="zh">TLS 1.3 传输层加密（聊天内容，端到端加密开发中）</li>\n      <li data-lang="zh">AES-256 数据库静态加密</li>\n      <li data-lang="zh">TLS 1.3 传输层加密</li>\n      <li data-lang="zh">最小权限原则：员工仅访问工作必需数据</li>\n      <li data-lang="zh">定期安全审计与渗透测试</li>\n      <li data-lang="zh">数据泄露发生后72小时内通知受影响用户及新西兰隐私专员办公室</li>\n      <li data-lang="zh-hant">TLS 1.3 傳輸層加密（所有數據）</li>\n      <li data-lang="zh-hant">AES-256 資料庫靜態加密</li>\n      <li data-lang="zh-hant">TLS 1.3 傳輸層加密</li>\n      <li data-lang="zh-hant">最小權限原則：員工僅存取工作必需數據</li>\n      <li data-lang="zh-hant">定期安全稽核與滲透測試</li>\n      <li data-lang="zh-hant">數據洩露發生後72小時內通知受影響用戶及紐西蘭隱私專員辦公室</li>\n      <li data-lang="en">TLS 1.3 transport encryption for all chat messages (E2E in development)</li>\n      <li data-lang="en">AES-256 database at-rest encryption</li>\n      <li data-lang="en">TLS 1.3 transport encryption</li>\n      <li data-lang="en">Least-privilege principle: staff access only data required for their role</li>\n      <li data-lang="en">Regular security audits and penetration testing</li>\n      <li data-lang="en">Breach notification to affected users and NZ Privacy Commissioner within 72 hours</li>\n    </ul>\n  </div>\n\n  <!-- §6 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">6</span>\n      <span data-lang="zh">第三方服务</span>\n      <span data-lang="zh-hant">第三方服務</span>\n      <span data-lang="en">Third-Party Services</span>\n    </div>\n    <table class="policy-table">\n      <tr>\n        <th data-lang="zh">服务商</th><th data-lang="zh">用途</th><th data-lang="zh">数据存储地</th>\n        <th data-lang="zh-hant">服務商</th><th data-lang="zh-hant">用途</th><th data-lang="zh-hant">數據存儲地</th>\n        <th data-lang="en">Provider</th><th data-lang="en">Purpose</th><th data-lang="en">Data Location</th>\n      </tr>\n      <tr>\n        <td data-lang="zh">Supabase</td><td data-lang="zh">数据库与认证</td><td data-lang="zh">AWS 澳洲</td>\n        <td data-lang="zh-hant">Supabase</td><td data-lang="zh-hant">資料庫與認證</td><td data-lang="zh-hant">AWS 澳洲</td>\n        <td data-lang="en">Supabase</td><td data-lang="en">Database & auth</td><td data-lang="en">AWS Australia</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">AWS S3</td><td data-lang="zh">图片/文件存储</td><td data-lang="zh">AWS 澳洲</td>\n        <td data-lang="zh-hant">AWS S3</td><td data-lang="zh-hant">圖片/檔案存儲</td><td data-lang="zh-hant">AWS 澳洲</td>\n        <td data-lang="en">AWS S3</td><td data-lang="en">File & image storage</td><td data-lang="en">AWS Australia</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">Cloudflare</td><td data-lang="zh">CDN / 安全防护</td><td data-lang="zh">全球节点（不含中国大陆）</td>\n        <td data-lang="zh-hant">Cloudflare</td><td data-lang="zh-hant">CDN / 安全防護</td><td data-lang="zh-hant">全球節點（不含中國大陸）</td>\n        <td data-lang="en">Cloudflare</td><td data-lang="en">CDN / DDoS protection</td><td data-lang="en">Global nodes (excluding mainland China)</td>\n      </tr>\n    </table>\n  </div>\n\n  <!-- §7 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">7</span>\n      <span data-lang="zh">Cookie 政策</span>\n      <span data-lang="zh-hant">Cookie 政策</span>\n      <span data-lang="en">Cookie Policy</span>\n    </div>\n    <p class="body-text" data-lang="zh">我们仅使用功能性Cookie：维持登录状态、存储语言偏好、基本错误追踪。不使用任何第三方广告Cookie或跨站追踪技术。</p>\n    <p class="body-text" data-lang="zh-hant">我們僅使用功能性Cookie：維持登入狀態、存儲語言偏好、基本錯誤追蹤。不使用任何第三方廣告Cookie或跨站追蹤技術。</p>\n    <p class="body-text" data-lang="en">We only use functional cookies: maintaining login sessions, storing language preferences, and basic error tracking. We do not use any third-party advertising cookies or cross-site tracking technologies.</p>\n  </div>\n\n  <!-- §8 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">8</span>\n      <span data-lang="zh">适用法律</span>\n      <span data-lang="zh-hant">適用法律</span>\n      <span data-lang="en">Governing Law</span>\n    </div>\n    <p class="body-text" data-lang="zh">本政策受新西兰《隐私法2020》（Privacy Act 2020）管辖。如有投诉，您可联系新西兰隐私专员办公室（OPC）：www.privacy.org.nz · 免费热线 0800 803 909</p>\n    <p class="body-text" data-lang="zh-hant">本政策受紐西蘭《隱私法2020》（Privacy Act 2020）管轄。如有投訴，您可聯繫紐西蘭隱私專員辦公室（OPC）：www.privacy.org.nz · 免費熱線 0800 803 909</p>\n    <p class="body-text" data-lang="en">This policy is governed by New Zealand\'s Privacy Act 2020. To file a complaint, contact the Office of the Privacy Commissioner (OPC): www.privacy.org.nz · Free phone 0800 803 909</p>\n  </div>\n\n  <!-- Contact -->\n  <div class="contact-box">\n    <h3>\n      <span data-lang="zh">联系隐私团队</span>\n      <span data-lang="zh-hant">聯繫隱私團隊</span>\n      <span data-lang="en">Contact Our Privacy Team</span>\n    </h3>\n    <a href="mailto:privacy@chrono100.com">privacy@chrono100.com</a><br>\n    <a href="https://chrono100.com" target="_blank">www.chrono100.com</a>\n    <p data-lang="zh">Auckland, New Zealand · 我们将在15个工作日内回复</p>\n    <p data-lang="zh-hant">Auckland, New Zealand · 我們將在15個工作日內回覆</p>\n    <p data-lang="en">Auckland, New Zealand · We respond within 15 business days</p>\n  </div>\n\n</div>\n\n<footer>\n  © 2026 Chrono100 · Auckland, New Zealand ·\n  <span data-lang="zh">保留所有权利</span>\n  <span data-lang="zh-hant">保留所有權利</span>\n  <span data-lang="en">All rights reserved</span>\n</footer>\n\n<script>\nvar BLOCK_TAGS = [\'P\',\'DIV\',\'UL\',\'OL\',\'TABLE\'];\n\nfunction getDisplayType(el) {\n  var tag = el.tagName;\n  if (tag === \'SPAN\') return \'inline\';\n  if (tag === \'TD\' || tag === \'TH\') return \'table-cell\';\n  if (tag === \'LI\') return \'flex\';\n  if (tag === \'TABLE\') return \'table\';\n  return \'block\';\n}\n\nfunction setLang(lang, btn) {\n  // Hide all data-lang elements\n  document.querySelectorAll(\'[data-lang]\').forEach(function(el) {\n    el.style.display = \'none\';\n  });\n  // Show only elements matching the selected lang\n  document.querySelectorAll(\'[data-lang="\' + lang + \'"]\').forEach(function(el) {\n    el.style.display = getDisplayType(el);\n  });\n  // Update buttons\n  document.querySelectorAll(\'.lang-btn\').forEach(function(b) { b.classList.remove(\'active\'); });\n  btn.classList.add(\'active\');\n  document.documentElement.lang = lang === \'zh\' ? \'zh-Hans\' : lang === \'zh-hant\' ? \'zh-Hant\' : \'en\';\n}\n\n// Init: show zh on load\ndocument.addEventListener(\'DOMContentLoaded\', function() {\n  setLang(\'zh\', document.querySelector(\'.lang-btn.active\'));\n';
+  ppContent.innerHTML = '\n<!-- HEADER -->\n<header class="site-header">\n  <div class="header-inner">\n    <div class="logo">CHRONO<span>100</span></div>\n    <div class="lang-switcher">\n      <button class="lang-btn active" onclick="setLang(\'zh\',this)">简体</button>\n      <button class="lang-btn" onclick="setLang(\'zh-hant\',this)">繁體</button>\n      <button class="lang-btn" onclick="setLang(\'en\',this)">EN</button>\n    </div>\n  </div>\n</header>\n\n<!-- HERO -->\n<div class="hero">\n  <div class="hero-badge">\n    <span data-lang="zh">数据主权 · 海外华人隐私保护</span>\n    <span data-lang="zh-hant">數據主權 · 海外華人隱私保護</span>\n    <span data-lang="en">Data Sovereignty · Privacy for Overseas Chinese</span>\n  </div>\n  <h1>\n    <span data-lang="zh">隐私政策</span>\n    <span data-lang="zh-hant">隱私政策</span>\n    <span data-lang="en">Privacy Policy</span>\n  </h1>\n  <p class="hero-sub">\n    <span data-lang="zh">适用于所有 Chrono100 用户</span>\n    <span data-lang="zh-hant">適用於所有 Chrono100 用戶</span>\n    <span data-lang="en">Applicable to all Chrono100 users</span>\n  </p>\n  <p class="hero-date">\n    <span data-lang="zh">生效日期：2026年4月1日 · 版本 V1.0</span>\n    <span data-lang="zh-hant">生效日期：2026年4月1日 · 版本 V1.0</span>\n    <span data-lang="en">Effective: April 1, 2026 · Version V1.0</span>\n  </p>\n</div>\n\n<!-- MAIN -->\n<div class="container">\n\n  <!-- Commitment -->\n  <div class="commitment">\n    <h3>\n      <span data-lang="zh">我们的核心承诺</span>\n      <span data-lang="zh-hant">我們的核心承諾</span>\n      <span data-lang="en">Our Core Commitment</span>\n    </h3>\n    <p data-lang="zh">Chrono100 由新西兰注册公司运营。所有用户数据存储于新西兰及澳大利亚境内服务器，受当地法律保护。</p>\n    <p data-lang="zh">我们不向任何外国政府、广告商或数据经纪商出售或共享您的个人数据。</p>\n    <p data-lang="zh-hant">Chrono100 由紐西蘭注冊公司營運。所有用戶數據存儲於紐西蘭及澳大利亞境內伺服器，受當地法律保護。</p>\n    <p data-lang="zh-hant">我們不向任何外國政府、廣告商或數據經紀商出售或共享您的個人數據。</p>\n    <p data-lang="en">Chrono100 is operated by a New Zealand registered company. All user data is stored on servers in New Zealand and Australia, protected under local law.</p>\n    <p data-lang="en">We do not sell or share your personal data with any foreign government, advertiser, or data broker.</p>\n  </div>\n\n  <!-- §1 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">1</span>\n      <span data-lang="zh">我们收集的信息</span>\n      <span data-lang="zh-hant">我們收集的資訊</span>\n      <span data-lang="en">Information We Collect</span>\n    </div>\n    <p class="sub-title">\n      <span data-lang="zh">1.1 您主动提供的信息</span>\n      <span data-lang="zh-hant">1.1 您主動提供的資訊</span>\n      <span data-lang="en">1.1 Information You Provide</span>\n    </p>\n    <ul class="policy-list">\n      <li data-lang="zh">注册信息：姓名（可使用昵称）、电子邮件地址、手机号码</li>\n      <li data-lang="zh">个人资料：头像、简介（均为可选）</li>\n      <li data-lang="zh">通讯内容：私信、群聊消息（端到端加密）</li>\n      <li data-lang="zh">生活轨迹：您主动记录的地点、照片、事件备注</li>\n      <li data-lang="zh-hant">註冊資訊：姓名（可使用暱稱）、電子郵件地址、手機號碼</li>\n      <li data-lang="zh-hant">個人資料：頭像、簡介（均為可選）</li>\n      <li data-lang="zh-hant">通訊內容：私訊、群聊消息（端到端加密）</li>\n      <li data-lang="zh-hant">生活軌跡：您主動記錄的地點、照片、事件備注</li>\n      <li data-lang="en">Registration: name (nickname accepted), email address, phone number</li>\n      <li data-lang="en">Profile: avatar, bio (all optional)</li>\n      <li data-lang="en">Communications: messages and group chats (end-to-end encrypted)</li>\n      <li data-lang="en">Life timeline: locations, photos and notes you actively record</li>\n    </ul>\n    <p class="sub-title">\n      <span data-lang="zh">1.2 自动收集的技术信息</span>\n      <span data-lang="zh-hant">1.2 自動收集的技術資訊</span>\n      <span data-lang="en">1.2 Automatically Collected Information</span>\n    </p>\n    <ul class="policy-list">\n      <li data-lang="zh">设备信息：操作系统、浏览器类型、设备型号</li>\n      <li data-lang="zh">位置信息：仅在您明确授权后收集GPS坐标</li>\n      <li data-lang="zh">使用日志：功能使用频率、匿名错误日志（不含内容）</li>\n      <li data-lang="zh-hant">設備資訊：作業系統、瀏覽器類型、設備型號</li>\n      <li data-lang="zh-hant">位置資訊：僅在您明確授權後收集GPS座標</li>\n      <li data-lang="zh-hant">使用日誌：功能使用頻率、匿名錯誤日誌（不含內容）</li>\n      <li data-lang="en">Device info: OS, browser type, device model</li>\n      <li data-lang="en">Location: GPS coordinates only when you explicitly grant permission</li>\n      <li data-lang="en">Usage logs: feature frequency, anonymous error logs (no content)</li>\n    </ul>\n    <p class="note" data-lang="zh">我们不收集您的通讯录、相册或麦克风数据，除非您明确授权特定功能使用。</p>\n    <p class="note" data-lang="zh-hant">我們不收集您的通訊錄、相冊或麥克風數據，除非您明確授權特定功能使用。</p>\n    <p class="note" data-lang="en">We do not access your contacts, photo library, or microphone unless you explicitly grant permission for a specific feature.</p>\n  </div>\n\n  <!-- §2 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">2</span>\n      <span data-lang="zh">数据存储与主权</span>\n      <span data-lang="zh-hant">數據存儲與主權</span>\n      <span data-lang="en">Data Storage & Sovereignty</span>\n    </div>\n    <table class="policy-table">\n      <tr>\n        <th data-lang="zh">项目</th><th data-lang="zh">详情</th>\n        <th data-lang="zh-hant">項目</th><th data-lang="zh-hant">詳情</th>\n        <th data-lang="en">Item</th><th data-lang="en">Details</th>\n      </tr>\n      <tr>\n        <td data-lang="zh">服务器位置</td><td data-lang="zh">新西兰 Auckland / 澳大利亚 Sydney（AWS ap-southeast-2）</td>\n        <td data-lang="zh-hant">伺服器位置</td><td data-lang="zh-hant">紐西蘭 Auckland / 澳大利亞 Sydney（AWS ap-southeast-2）</td>\n        <td data-lang="en">Server Location</td><td data-lang="en">New Zealand Auckland / Australia Sydney (AWS ap-southeast-2)</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">传输加密</td><td data-lang="zh">TLS 1.3 全程加密</td>\n        <td data-lang="zh-hant">傳輸加密</td><td data-lang="zh-hant">TLS 1.3 全程加密</td>\n        <td data-lang="en">Transport Encryption</td><td data-lang="en">TLS 1.3 end-to-end</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">静态加密</td><td data-lang="zh">AES-256 数据库加密</td>\n        <td data-lang="zh-hant">靜態加密</td><td data-lang="zh-hant">AES-256 資料庫加密</td>\n        <td data-lang="en">At-Rest Encryption</td><td data-lang="en">AES-256 database encryption</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">聊天内容</td><td data-lang="zh">端到端加密，服务器无法读取明文</td>\n        <td data-lang="zh-hant">聊天內容</td><td data-lang="zh-hant">端到端加密，伺服器無法讀取明文</td>\n        <td data-lang="en">Chat Messages</td><td data-lang="en">End-to-end encrypted; plaintext is never accessible on our servers</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">数据保留期</td><td data-lang="zh">账户活跃期间 + 注销后30天彻底删除</td>\n        <td data-lang="zh-hant">數據保留期</td><td data-lang="zh-hant">帳戶活躍期間 + 登出後30天徹底刪除</td>\n        <td data-lang="en">Retention Period</td><td data-lang="en">Active account period + 30 days after deletion request</td>\n      </tr>\n    </table>\n\n    <p class="note" data-lang="zh">我们每年发布透明度报告，公示所有数据请求及处理情况。</p>\n    <p class="note" data-lang="zh-hant">我們每年發布透明度報告，公示所有數據請求及處理情況。</p>\n    <p class="note" data-lang="en">We publish an annual transparency report disclosing all data requests received and how they were handled.</p>\n  </div>\n\n  <!-- §3 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">3</span>\n      <span data-lang="zh">数据使用目的</span>\n      <span data-lang="zh-hant">數據使用目的</span>\n      <span data-lang="en">How We Use Your Data</span>\n    </div>\n    <ul class="policy-list">\n      <li data-lang="zh">提供产品核心功能：定位共享、聊天、轨迹记录</li>\n      <li data-lang="zh">账户安全验证与反欺诈</li>\n      <li data-lang="zh">使用匿名化聚合数据改进产品</li>\n      <li data-lang="zh">响应您的客服请求</li>\n      <li data-lang="zh-hant">提供產品核心功能：定位共享、聊天、軌跡記錄</li>\n      <li data-lang="zh-hant">帳戶安全驗證與反欺詐</li>\n      <li data-lang="zh-hant">使用匿名化聚合數據改進產品</li>\n      <li data-lang="zh-hant">響應您的客服請求</li>\n      <li data-lang="en">Providing core features: location sharing, chat, timeline recording</li>\n      <li data-lang="en">Account security verification and fraud prevention</li>\n      <li data-lang="en">Product improvement using anonymised aggregate statistics</li>\n      <li data-lang="en">Responding to your support requests</li>\n    </ul>\n    <div class="highlight-box" style="margin-top:16px">\n      <p data-lang="zh"><strong>我们绝不将您的数据用于：</strong></p>\n      <p data-lang="zh">出售给广告商 · 政治分析或内容审查 · 向第三方平台同步（包括微信、微博）· 训练对外销售的AI模型</p>\n      <p data-lang="zh-hant"><strong>我們絕不將您的數據用於：</strong></p>\n      <p data-lang="zh-hant">出售給廣告商 · 政治分析或內容審查 · 向第三方平台同步（包括微信、微博）· 訓練對外銷售的AI模型</p>\n      <p data-lang="en"><strong>We will never use your data for:</strong></p>\n      <p data-lang="en">Selling to advertisers · Political analysis or content censorship · Syncing to third-party platforms (including WeChat, Weibo) · Training AI models sold externally</p>\n    </div>\n  </div>\n\n  <!-- §4 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">4</span>\n      <span data-lang="zh">您的数据权利</span>\n      <span data-lang="zh-hant">您的數據權利</span>\n      <span data-lang="en">Your Data Rights</span>\n    </div>\n    <p class="body-text" data-lang="zh">根据新西兰《隐私法2020》及GDPR相关原则，您享有以下权利：</p>\n    <p class="body-text" data-lang="zh-hant">根據紐西蘭《隱私法2020》及GDPR相關原則，您享有以下權利：</p>\n    <p class="body-text" data-lang="en">Under New Zealand\'s Privacy Act 2020 and relevant GDPR principles, you have the following rights:</p>\n    <table class="policy-table" style="margin-top:12px">\n      <tr>\n        <th data-lang="zh">权利</th><th data-lang="zh">说明</th>\n        <th data-lang="zh-hant">權利</th><th data-lang="zh-hant">說明</th>\n        <th data-lang="en">Right</th><th data-lang="en">Description</th>\n      </tr>\n      <tr>\n        <td data-lang="zh">访问权</td><td data-lang="zh">申请获取我们持有的您的全部个人数据副本</td>\n        <td data-lang="zh-hant">存取權</td><td data-lang="zh-hant">申請獲取我們持有的您的全部個人數據副本</td>\n        <td data-lang="en">Right of Access</td><td data-lang="en">Request a copy of all personal data we hold about you</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">更正权</td><td data-lang="zh">要求更正不准确或不完整的数据</td>\n        <td data-lang="zh-hant">更正權</td><td data-lang="zh-hant">要求更正不準確或不完整的數據</td>\n        <td data-lang="en">Right to Rectification</td><td data-lang="en">Request correction of inaccurate or incomplete data</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">删除权</td><td data-lang="zh">要求彻底删除您的账户及所有相关数据</td>\n        <td data-lang="zh-hant">刪除權</td><td data-lang="zh-hant">要求徹底刪除您的帳戶及所有相關數據</td>\n        <td data-lang="en">Right to Erasure</td><td data-lang="en">Request complete deletion of your account and all associated data</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">可携带权</td><td data-lang="zh">以机器可读格式导出您的全部数据</td>\n        <td data-lang="zh-hant">可攜帶權</td><td data-lang="zh-hant">以機器可讀格式匯出您的全部數據</td>\n        <td data-lang="en">Data Portability</td><td data-lang="en">Export all your data in a machine-readable format</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">撤回同意权</td><td data-lang="zh">随时撤回您此前给予的数据授权</td>\n        <td data-lang="zh-hant">撤回同意權</td><td data-lang="zh-hant">隨時撤回您此前給予的數據授權</td>\n        <td data-lang="en">Right to Withdraw Consent</td><td data-lang="en">Withdraw any previously granted data authorisation at any time</td>\n      </tr>\n    </table>\n    <p class="note" data-lang="zh" style="margin-top:14px">行使上述权利，请发送邮件至 privacy@chrono100.com，我们将在15个工作日内响应。</p>\n    <p class="note" data-lang="zh-hant" style="margin-top:14px">行使上述權利，請發送郵件至 privacy@chrono100.com，我們將在15個工作日內響應。</p>\n    <p class="note" data-lang="en" style="margin-top:14px">To exercise any of these rights, email privacy@chrono100.com. We will respond within 15 business days.</p>\n  </div>\n\n  <!-- §5 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">5</span>\n      <span data-lang="zh">数据安全措施</span>\n      <span data-lang="zh-hant">數據安全措施</span>\n      <span data-lang="en">Security Measures</span>\n    </div>\n    <ul class="policy-list">\n      <li data-lang="zh">端到端加密（聊天内容）</li>\n      <li data-lang="zh">AES-256 数据库静态加密</li>\n      <li data-lang="zh">TLS 1.3 传输层加密</li>\n      <li data-lang="zh">最小权限原则：员工仅访问工作必需数据</li>\n      <li data-lang="zh">定期安全审计与渗透测试</li>\n      <li data-lang="zh">数据泄露发生后72小时内通知受影响用户及新西兰隐私专员办公室</li>\n      <li data-lang="zh-hant">端到端加密（聊天內容）</li>\n      <li data-lang="zh-hant">AES-256 資料庫靜態加密</li>\n      <li data-lang="zh-hant">TLS 1.3 傳輸層加密</li>\n      <li data-lang="zh-hant">最小權限原則：員工僅存取工作必需數據</li>\n      <li data-lang="zh-hant">定期安全稽核與滲透測試</li>\n      <li data-lang="zh-hant">數據洩露發生後72小時內通知受影響用戶及紐西蘭隱私專員辦公室</li>\n      <li data-lang="en">End-to-end encryption for all chat messages</li>\n      <li data-lang="en">AES-256 database at-rest encryption</li>\n      <li data-lang="en">TLS 1.3 transport encryption</li>\n      <li data-lang="en">Least-privilege principle: staff access only data required for their role</li>\n      <li data-lang="en">Regular security audits and penetration testing</li>\n      <li data-lang="en">Breach notification to affected users and NZ Privacy Commissioner within 72 hours</li>\n    </ul>\n  </div>\n\n  <!-- §6 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">6</span>\n      <span data-lang="zh">第三方服务</span>\n      <span data-lang="zh-hant">第三方服務</span>\n      <span data-lang="en">Third-Party Services</span>\n    </div>\n    <table class="policy-table">\n      <tr>\n        <th data-lang="zh">服务商</th><th data-lang="zh">用途</th><th data-lang="zh">数据存储地</th>\n        <th data-lang="zh-hant">服務商</th><th data-lang="zh-hant">用途</th><th data-lang="zh-hant">數據存儲地</th>\n        <th data-lang="en">Provider</th><th data-lang="en">Purpose</th><th data-lang="en">Data Location</th>\n      </tr>\n      <tr>\n        <td data-lang="zh">Supabase</td><td data-lang="zh">数据库与认证</td><td data-lang="zh">AWS 澳洲</td>\n        <td data-lang="zh-hant">Supabase</td><td data-lang="zh-hant">資料庫與認證</td><td data-lang="zh-hant">AWS 澳洲</td>\n        <td data-lang="en">Supabase</td><td data-lang="en">Database & auth</td><td data-lang="en">AWS Australia</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">AWS S3</td><td data-lang="zh">图片/文件存储</td><td data-lang="zh">AWS 澳洲</td>\n        <td data-lang="zh-hant">AWS S3</td><td data-lang="zh-hant">圖片/檔案存儲</td><td data-lang="zh-hant">AWS 澳洲</td>\n        <td data-lang="en">AWS S3</td><td data-lang="en">File & image storage</td><td data-lang="en">AWS Australia</td>\n      </tr>\n      <tr>\n        <td data-lang="zh">Cloudflare</td><td data-lang="zh">CDN / 安全防护</td><td data-lang="zh">全球节点（不含中国大陆）</td>\n        <td data-lang="zh-hant">Cloudflare</td><td data-lang="zh-hant">CDN / 安全防護</td><td data-lang="zh-hant">全球節點（不含中國大陸）</td>\n        <td data-lang="en">Cloudflare</td><td data-lang="en">CDN / DDoS protection</td><td data-lang="en">Global nodes (excluding mainland China)</td>\n      </tr>\n    </table>\n  </div>\n\n  <!-- §7 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">7</span>\n      <span data-lang="zh">Cookie 政策</span>\n      <span data-lang="zh-hant">Cookie 政策</span>\n      <span data-lang="en">Cookie Policy</span>\n    </div>\n    <p class="body-text" data-lang="zh">我们仅使用功能性Cookie：维持登录状态、存储语言偏好、基本错误追踪。不使用任何第三方广告Cookie或跨站追踪技术。</p>\n    <p class="body-text" data-lang="zh-hant">我們僅使用功能性Cookie：維持登入狀態、存儲語言偏好、基本錯誤追蹤。不使用任何第三方廣告Cookie或跨站追蹤技術。</p>\n    <p class="body-text" data-lang="en">We only use functional cookies: maintaining login sessions, storing language preferences, and basic error tracking. We do not use any third-party advertising cookies or cross-site tracking technologies.</p>\n  </div>\n\n  <!-- §8 -->\n  <div class="section">\n    <div class="section-title"><span class="section-num">8</span>\n      <span data-lang="zh">适用法律</span>\n      <span data-lang="zh-hant">適用法律</span>\n      <span data-lang="en">Governing Law</span>\n    </div>\n    <p class="body-text" data-lang="zh">本政策受新西兰《隐私法2020》（Privacy Act 2020）管辖。如有投诉，您可联系新西兰隐私专员办公室（OPC）：www.privacy.org.nz · 免费热线 0800 803 909</p>\n    <p class="body-text" data-lang="zh-hant">本政策受紐西蘭《隱私法2020》（Privacy Act 2020）管轄。如有投訴，您可聯繫紐西蘭隱私專員辦公室（OPC）：www.privacy.org.nz · 免費熱線 0800 803 909</p>\n    <p class="body-text" data-lang="en">This policy is governed by New Zealand\'s Privacy Act 2020. To file a complaint, contact the Office of the Privacy Commissioner (OPC): www.privacy.org.nz · Free phone 0800 803 909</p>\n  </div>\n\n  <!-- Contact -->\n  <div class="contact-box">\n    <h3>\n      <span data-lang="zh">联系隐私团队</span>\n      <span data-lang="zh-hant">聯繫隱私團隊</span>\n      <span data-lang="en">Contact Our Privacy Team</span>\n    </h3>\n    <a href="mailto:privacy@chrono100.com">privacy@chrono100.com</a><br>\n    <a href="https://chrono100.com" target="_blank">www.chrono100.com</a>\n    <p data-lang="zh">Auckland, New Zealand · 我们将在15个工作日内回复</p>\n    <p data-lang="zh-hant">Auckland, New Zealand · 我們將在15個工作日內回覆</p>\n    <p data-lang="en">Auckland, New Zealand · We respond within 15 business days</p>\n  </div>\n\n</div>\n\n<footer>\n  © 2026 Chrono100 · Auckland, New Zealand ·\n  <span data-lang="zh">保留所有权利</span>\n  <span data-lang="zh-hant">保留所有權利</span>\n  <span data-lang="en">All rights reserved</span>\n</footer>\n\n<script>\nvar BLOCK_TAGS = [\'P\',\'DIV\',\'UL\',\'OL\',\'TABLE\'];\n\nfunction getDisplayType(el) {\n  var tag = el.tagName;\n  if (tag === \'SPAN\') return \'inline\';\n  if (tag === \'TD\' || tag === \'TH\') return \'table-cell\';\n  if (tag === \'LI\') return \'flex\';\n  if (tag === \'TABLE\') return \'table\';\n  return \'block\';\n}\n\nfunction setLang(lang, btn) {\n  // Hide all data-lang elements\n  document.querySelectorAll(\'[data-lang]\').forEach(function(el) {\n    el.style.display = \'none\';\n  });\n  // Show only elements matching the selected lang\n  document.querySelectorAll(\'[data-lang="\' + lang + \'"]\').forEach(function(el) {\n    el.style.display = getDisplayType(el);\n  });\n  // Update buttons\n  document.querySelectorAll(\'.lang-btn\').forEach(function(b) { b.classList.remove(\'active\'); });\n  btn.classList.add(\'active\');\n  document.documentElement.lang = lang === \'zh\' ? \'zh-Hans\' : lang === \'zh-hant\' ? \'zh-Hant\' : \'en\';\n}\n\n// Init: show zh on load\ndocument.addEventListener(\'DOMContentLoaded\', function() {\n  setLang(\'zh\', document.querySelector(\'.lang-btn.active\'));\n';
   
   // Init lang display
   ppSetLang('zh', document.getElementById('ppLang-zh'));
@@ -11049,7 +10802,6 @@ function confirmLogout() {
 function _doLogout() {
   var client = sb();
   if (client) client.auth.signOut().catch(function(){});
-  cacheClearAll(); // 退出时清除所有缓存
   // 保留名字、头像emoji、setup标记 — 重新登录后不需要重填
   var _storedName = localStorage.getItem('c100_name');
   userName = (_storedName && _storedName !== 'undefined') ? _storedName : '用户';
@@ -11516,7 +11268,7 @@ async function _doDeleteTrajItem(id, el) {
   window._todayItemsCache = [];
   if (row && row.parentNode) row.parentNode.removeChild(row);
   toast('已删除');
-  await cacheClear('today'); loadTodayActivity();
+  await loadTodayActivity();
 
   // Refresh summary stats if visible
   var summaryModule = document.getElementById('lifeSummaryModule');
@@ -11581,7 +11333,7 @@ async function _doDeleteTodayItem(id) {
   }
 
   // Refresh all views
-  await cacheClear('today'); loadTodayActivity();
+  await loadTodayActivity();
   renderTrajList();
   renderLifeMap(_momentsCache);
   buildMomentsFeed();
@@ -11712,36 +11464,7 @@ function hookRealtimeBadge() {
   } catch(e) {}
 }
 
-async // ── 通知点击直达对话 ──
-function handleNotificationClick(data) {
-  try {
-    var senderId = data && (data.senderId || data.from_uid || (data.additionalData && data.additionalData.senderId));
-    if (senderId) {
-      // 找到对应联系人并直接打开对话
-      gotoPage('chat');
-      setTimeout(function() {
-        var idx = CHATS.findIndex ? CHATS.findIndex(function(c){ return c.memberId === senderId; })
-                 : (function(){ for(var i=0;i<CHATS.length;i++){ if(CHATS[i].memberId===senderId) return i; } return -1; })();
-        if (idx >= 0) {
-          openChat(idx); // 直接进对话，跳过列表
-        } else {
-          // 联系人还没加载，先加载再打开
-          loadRealContacts();
-          setTimeout(function() {
-            var idx2 = CHATS.findIndex ? CHATS.findIndex(function(c){ return c.memberId === senderId; })
-                     : (function(){ for(var i=0;i<CHATS.length;i++){ if(CHATS[i].memberId===senderId) return i; } return -1; })();
-            if (idx2 >= 0) openChat(idx2);
-          }, 1000);
-        }
-      }, 300);
-    } else {
-      // 没有具体发送者，进消息列表
-      gotoPage('chat');
-    }
-  } catch(e) { gotoPage('chat'); }
-}
-
-function initOneSignal() {
+async function initOneSignal() {
   try {
     var uid = await getUid();
     if (!uid) return;
@@ -11750,15 +11473,6 @@ function initOneSignal() {
         // 用UID登录OneSignal，实现精准推送
         await os.login(uid);
         console.log('✅ OneSignal linked to uid:', uid.slice(0,8));
-
-        // ⚡ 通知点击直达对话 — 注册监听
-        os.Notifications.addEventListener('click', function(event) {
-          try {
-            var data = event && event.notification && event.notification.additionalData;
-            handleNotificationClick(data || {});
-          } catch(e) { gotoPage('chat'); }
-        });
-
       } catch(e) { console.warn('OneSignal login err:', e); }
     });
   } catch(e) {}
@@ -12804,7 +12518,7 @@ async function uploadToFolder(file) {
 
 async function deleteTodayByIndex(idx) {
   var items = window._todayItemsCache||[];
-  var it = items[idx]; if(!it) { cacheClear('today'); loadTodayActivity(); return; }
+  var it = items[idx]; if(!it) { loadTodayActivity(); return; }
   var id = it.momentId, lbl = it.lbl||'';
   window._todayItemsCache = items.filter(function(_,i){return i!==idx;});
   renderTodayList();
@@ -12826,7 +12540,7 @@ async function deleteTodayByIndex(idx) {
     }
     toast('已删除');
   } catch(e) { toast('已从列表移除'); }
-  setTimeout(function(){cacheClear('today'); loadTodayActivity();},1000);
+  setTimeout(function(){loadTodayActivity();},1000);
 }
 
 function openChangePwdSheet() {
@@ -13302,11 +13016,6 @@ async function generateAIInsight() {
       typewriterEffect(textEl, cached.text, 20);
       if (tagsEl && cached.tags) renderInsightTags(tagsEl, cached.tags);
       if (timeEl) timeEl.textContent = cached.generatedAt || '';
-      // ⚡ 同步到今日动态卡片
-      var snEl = document.getElementById('todayAiWords');
-      var snWrap = document.getElementById('todayAiSnippet');
-      if (snEl) snEl.textContent = cached.text;
-      if (snWrap) snWrap.style.display = '';
       return;
     }
   } catch(e) {}
@@ -13354,11 +13063,6 @@ async function generateAIInsight() {
     typewriterEffect(textEl, insightText, 18);
     if (tagsEl) renderInsightTags(tagsEl, tags);
     if (timeEl) timeEl.textContent = generatedAt;
-    // ⚡ 同步到今日动态卡片内的AI片段
-    var snippetEl = document.getElementById('todayAiWords');
-    var snippetWrap = document.getElementById('todayAiSnippet');
-    if (snippetEl) snippetEl.textContent = insightText;
-    if (snippetWrap) snippetWrap.style.display = '';
 
     // Cache for 1 hour
     try { localStorage.setItem(cacheKey, JSON.stringify({ text: insightText, tags: tags, generatedAt: generatedAt })); } catch(e) {}
@@ -13368,11 +13072,6 @@ async function generateAIInsight() {
     var fallback = buildFallbackInsight(items);
     textEl.style.opacity = '1';
     textEl.textContent = fallback;
-    // ⚡ 同步到今日动态卡片内的AI片段
-    var snippetElF = document.getElementById('todayAiWords');
-    var snippetWrapF = document.getElementById('todayAiSnippet');
-    if (snippetElF) snippetElF.textContent = fallback;
-    if (snippetWrapF) snippetWrapF.style.display = '';
   }
 }
 
@@ -14821,7 +14520,7 @@ function switchToArchive(archive) {
   _activeArchive = archive;
   try { localStorage.setItem('c100_active_archive', JSON.stringify(archive)); } catch(e) {}
   updateArchiveUI();
-  try { cacheClear('today'); loadTodayActivity(); } catch(e) {}
+  try { loadTodayActivity(); } catch(e) {}
   try { loadMomentsFromDB(); } catch(e) {}
   toast('已切换到「' + archive.name + '」的档案');
 }
@@ -14830,7 +14529,7 @@ function switchToMain() {
   _activeArchive = null;
   try { localStorage.removeItem('c100_active_archive'); } catch(e) {}
   updateArchiveUI();
-  try { cacheClear('today'); loadTodayActivity(); } catch(e) {}
+  try { loadTodayActivity(); } catch(e) {}
   try { loadMomentsFromDB(); } catch(e) {}
   toast('已切换回主账户');
 }
