@@ -859,6 +859,14 @@ body.dark .login-card,body.dark .cr-bar,body.dark .bottom-tabs{background:var(--
   <!-- OneSignal Push Notification SDK -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
+
+// ⚡ 极简缓存层
+var _CACHE_TTL = { today:60000, contacts:300000, circle:30000, feed:120000 };
+function cacheSet(k,d){try{localStorage.setItem('_c_'+k,JSON.stringify({ts:Date.now(),data:d}));}catch(e){}}
+function cacheGet(k,ttl){try{var r=JSON.parse(localStorage.getItem('_c_'+k)||'null');if(!r||Date.now()-r.ts>(ttl||300000))return null;return r.data;}catch(e){return null;}}
+function cacheClear(k){try{localStorage.removeItem('_c_'+k);}catch(e){}}
+function cacheClearAll(){try{Object.keys(localStorage).filter(function(k){return k.startsWith('_c_');}).forEach(function(k){localStorage.removeItem(k);});}catch(e){}}
+
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
@@ -1904,7 +1912,7 @@ function sb() {
   try {
     _sbClient = supabase.createClient(
       'https://flerfkkbzrnxreszxmcd.supabase.co',
-      'sb_publishable_9ipOnX_DwgqDi1-z8Im4qA_EeAs7MEn',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZXJma2tienJueHJlc3p4bWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NjUxNzgsImV4cCI6MjA4OTU0MTE3OH0.kzdoWECmd9vGoLQpLMxjCx0Cf2tf1CTKDZOtL0X1O98',
       { auth: {
           detectSessionInUrl: true,
           persistSession: true,
@@ -4150,7 +4158,7 @@ function switchLoginTab(tab) {
 var _phoneOtpSent = false;
 var _phoneOtpFull = '';
 var EDGE_URL = 'https://flerfkkbzrnxreszxmcd.supabase.co/functions/v1';
-var SB_KEY   = 'sb_publishable_9ipOnX_DwgqDi1-z8Im4qA_EeAs7MEn';
+var SB_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZXJma2tienJueHJlc3p4bWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NjUxNzgsImV4cCI6MjA4OTU0MTE3OH0.kzdoWECmd9vGoLQpLMxjCx0Cf2tf1CTKDZOtL0X1O98';
 
 async function doPhoneStep() {
   if (_phoneOtpSent) return;
@@ -4500,6 +4508,19 @@ function _setUserName(fromAuth) {
   if (userName && userName !== '用户') {
     try { localStorage.setItem('c100_name', userName); } catch(e) {}
   }
+}
+
+
+// ── 统一设置用户名（优先localStorage，不覆盖已保存的名字）──
+function _setUserName(fromAuth) {
+  var saved = '';
+  try { saved = localStorage.getItem('c100_name') || ''; } catch(e) {}
+  if (saved && saved !== '用户' && saved !== 'undefined') { userName = saved; return; }
+  if (fromAuth) {
+    var meta = (fromAuth.user_metadata && fromAuth.user_metadata.full_name && fromAuth.user_metadata.full_name !== 'undefined') ? fromAuth.user_metadata.full_name : '';
+    userName = meta || (fromAuth.email ? fromAuth.email.split('@')[0] : '') || (fromAuth.phone ? fromAuth.phone.slice(-4) : '') || '用户';
+  }
+  if (userName && userName !== '用户') { try { localStorage.setItem('c100_name', userName); } catch(e) {} }
 }
 
 async function enterApp() {
@@ -8035,7 +8056,7 @@ async function saveEvent() {
 async function _autoAnalyzeMoment(momentId, ctx) {
   try {
     var EDGE_FUNC = 'https://flerfkkbzrnxreszxmcd.supabase.co/functions/v1/clever-task';
-    var AKEY = 'sb_publishable_9ipOnX_DwgqDi1-z8Im4qA_EeAs7MEn';
+    var AKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZXJma2tienJueHJlc3p4bWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NjUxNzgsImV4cCI6MjA4OTU0MTE3OH0.kzdoWECmd9vGoLQpLMxjCx0Cf2tf1CTKDZOtL0X1O98';
     var content = [];
     for (var i = 0; i < Math.min(ctx.photoUrls.length, 2); i++) {
       try {
@@ -13042,7 +13063,7 @@ async function generateAIInsight() {
   try {
     var res = await fetch('https://flerfkkbzrnxreszxmcd.supabase.co/functions/v1/ai-proxy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': 'sb_publishable_9ipOnX_DwgqDi1-z8Im4qA_EeAs7MEn' },
+      headers: { 'Content-Type': 'application/json', 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZXJma2tienJueHJlc3p4bWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NjUxNzgsImV4cCI6MjA4OTU0MTE3OH0.kzdoWECmd9vGoLQpLMxjCx0Cf2tf1CTKDZOtL0X1O98' },
       body: JSON.stringify({ prompt: prompt, max_tokens: 300 })
     });
     if (!res.ok) throw new Error('API error');
